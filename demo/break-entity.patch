@@ -1,0 +1,22 @@
+diff --git a/src/main/java/org/springframework/samples/petclinic/owner/Pet.java b/src/main/java/org/springframework/samples/petclinic/owner/Pet.java
+--- a/src/main/java/org/springframework/samples/petclinic/owner/Pet.java
++++ b/src/main/java/org/springframework/samples/petclinic/owner/Pet.java
+@@ -16,7 +16,9 @@
+ package org.springframework.samples.petclinic.owner;
+
+ import java.time.LocalDate;
++import java.util.ArrayList;
+ import java.util.Collection;
++import java.util.List;
+ import java.util.LinkedHashSet;
+ import java.util.Set;
+
+@@ -56,7 +58,7 @@ public class Pet extends NamedEntity {
+ 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+ 	@JoinColumn(name = "pet_id")
+ 	@OrderBy("date ASC")
+-	private final Set<Visit> visits = new LinkedHashSet<>();
++	private final List<Visit> visits = new ArrayList<>();
+
+ 	public Collection<Visit> getVisits() {
+ 		return this.visits;

@@ -1,0 +1,12 @@
+## persistence
+Status: PARTIAL
+Rules: 31 total | 29 passed | 2 failed | 0 warnings
+
+[FAIL] Pet.visits — Type mismatch: Set<Visit> -> List<Visit>
+[FAIL] Pet relationship OneToMany -> Visit — Collection type mismatch: Set -> List
+
+(the 29 [PASS] lines are omitted)
+
+Same project after applying break-entity.patch:
+  ./mvnw compile  -> BUILD SUCCESS
+  ./mvnw test     -> Tests run: 82, Failures: 0, Errors: 0, Skipped: 5

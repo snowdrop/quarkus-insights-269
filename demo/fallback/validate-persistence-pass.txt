@@ -1,0 +1,35 @@
+## persistence
+Status: PASS
+Rules: 31 total | 31 passed | 0 failed | 0 warnings
+
+[PASS] Entity count — Entity count matches: 6 entities in both projects
+[PASS] All entities migrated — All Spring entities found in Quarkus project
+[PASS] Specialty table name — Table name specialties validated
+[PASS] Specialty.name — Field name validated
+[PASS] Owner table name — Table name owners validated
+[PASS] Owner.pets — Field pets validated
+[PASS] Owner.firstName — Field firstName validated
+[PASS] Owner.lastName — Field lastName validated
+[PASS] Owner.address — Field address validated
+[PASS] Owner.city — Field city validated
+[PASS] Owner.telephone — Field telephone validated
+[PASS] Owner relationship OneToMany -> Pet — Relationship OneToMany -> Pet validated
+[PASS] Vet table name — Table name vets validated
+[PASS] Vet.firstName — Field firstName validated
+[PASS] Vet.lastName — Field lastName validated
+[PASS] Vet.specialties — Field specialties validated
+[PASS] Vet relationship ManyToMany -> Specialty — Relationship ManyToMany -> Specialty validated
+[PASS] Visit table name — Table name visits validated
+[PASS] Visit ID generation — ID strategy IDENTITY validated
+[PASS] Visit.date — Field date validated
+[PASS] Visit.description — Field description validated
+[PASS] Visit.id — Field id validated
+[PASS] Pet table name — Table name pets validated
+[PASS] Pet.visits — Field visits validated
+[PASS] Pet.name — Field name validated
+[PASS] Pet.type — Field type validated
+[PASS] Pet.birthDate — Field birthDate validated
+[PASS] Pet relationship ManyToOne -> PetType — Relationship ManyToOne -> PetType validated
+[PASS] Pet relationship OneToMany -> Visit — Relationship OneToMany -> Visit validated
+[PASS] PetType table name — Table name types validated
+[PASS] PetType.name — Field name validated
