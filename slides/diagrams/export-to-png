@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Run from the script's own directory so relative paths work from anywhere
+cd "$(dirname "$0")"
+
+FILE=${1:-migration-is-hard.drawio}
+pages=$(grep -o '<diagram ' "$FILE" | wc -l)
+for ((i = 1; i <= pages; i++)); do
+  drawio -x -f png -p "$i" -o "${FILE%.drawio}-$i.png" "$FILE"
+done
