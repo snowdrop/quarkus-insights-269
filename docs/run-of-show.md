@@ -22,7 +22,7 @@ About 50 minutes of content plus Q&A, three slides in total, everything else liv
 |---|---|---|---|---|
 | 0–3 | Both | The problem | Migrating is not swapping annotations: build, config, DI, persistence, views, tests | Slide 1 |
 | 3–15 | Charles | mtool CLI | `mtool analyze` with YAML rules, the query language (ANTLR), scanners (treesitter / openrewrite / maven), the JSON report, `mtool transform --dry-run` on `spring-boot-todo-app` | Terminal + a rule YAML |
-| 15–18 | Charles | From rules to skills | Rules are reliable but can't cover every Spring pattern; AI covers more but improvises. So AI does the work and deterministic tools check it | Slide 2: agent ↔ skill ↔ quarkit MCP diagram |
+| 15–18 | Aurea | From rules to skills | Rules are reliable but can't cover every Spring pattern; AI covers more but improvises. So AI does the work and deterministic tools check it | Slide 2: agent ↔ skill ↔ quarkit MCP diagram |
 | 18–30 | Aurea | Anatomy of the skill | `SKILL.md` critical rules, the decision gate table, modules loaded on demand, the `compile-fix` loop, the reporting module | Editor |
 | 30–40 | Charles | quarkit MCP live | `tools/list` with curl, `quarkit_analyze` on PetClinic, `quarkit_reference_lookup`. Then break a migrated entity (`Pet.visits` from `Set` to `List`: it compiles and the 82 tests still pass) and show `quarkit_validate persistence` failing | Terminal |
 | 40–47 | Aurea | The result | Full PetClinic migration (pre-run): 82 tests, Thymeleaf → Qute, `migration-summary.md`, app running | Terminal + browser |

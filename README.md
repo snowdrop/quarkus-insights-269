@@ -41,7 +41,7 @@ new validators and mappings.
 |-----|-----|---------|
 | 0–3 | Both | The problem (slide 1) |
 | 3–15 | Charles | `mtool` CLI: rules, query language, scanners, `analyze` / `transform --dry-run` |
-| 15–18 | Charles | From rules to skills (slide 2) |
+| 15–18 | Aurea | From rules to skills (slide 2) |
 | 18–30 | Aurea | Anatomy of the `migrate-spring-to-quarkus` skill |
 | 30–40 | Charles | quarkit MCP live: `tools/list`, `quarkit_analyze`, `quarkit_reference_lookup`, a broken entity caught by `quarkit_validate` |
 | 40–47 | Aurea | The result: PetClinic on Quarkus |
