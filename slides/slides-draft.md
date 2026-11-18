@@ -64,13 +64,40 @@ Diagram:
                     └──────────────────┘    validators: project-setup, persistence)
 ```
 
-**Speaker notes:** The full picture looks like this. A deterministic sandwich around the AI.
-[AI Skill] In the middle, the skill. It does the work that needs context: controller logic, template conversion, config reasoning, strategy decisions, tests. Tokens, flexible, variable. That’s the price of understanding.
-[Validators] Next to it, the validators. They are deterministic: pure Java, zero tokens, same result every time. They compare the Quarkus project against the Spring source: project setup, entities and their relations, ID strategies, table names, REST endpoints, configuration, messaging.
-[MCP, nota amarilla] And they live in quarkit, our MCP server. If the server is running, the agent discovers the validators as tools and calls them by itself, during the migration
-[feedback loop] When a validator fails, the result goes back to the skill, and the agent fixes it. AI proposes, rules verify.
-Verified Quarkus Project] What comes out is not “a Quarkus project”. It’s a verified one.
-Let’s see it run.
+**Speaker notes, alternative: walking the diagram (~3 min)**
+
+*Transition from Charles (≈20 s)*
+"So that's mtool: rules are deterministic, reproducible, auditable. But every Spring pattern needs a rule,
+and real apps have patterns nobody wrote a rule for. AI covers far more ground, but it improvises. So the
+question became: how do we get the coverage of AI with the reliability of rules?"
+
+*The prompt and the agent, left and centre (≈30 s)*
+"It starts with one prompt: *migrate this Spring Boot project*. The agent, Claude Code here but any ACP
+agent works, is the one that reads code and writes code. That's what it's good at."
+
+*The skill, top (≈40 s)*
+"But we don't let it improvise the plan. The skill gives it one: which modules exist (build, persistence,
+code, views, tests), a gate that decides whether each one applies, and the rule that after every module the
+project must compile. The modules are loaded only when needed, so the agent isn't carrying the whole
+playbook in its context. I'll open it in a minute."
+
+*quarkit, right (≈50 s)*
+"And this is the part that changes everything: quarkit, an MCP server built on the same engine as mtool,
+the same scanners and the same query language. The agent doesn't *guess* what's in the project: it asks
+`quarkit_analyze`. It doesn't guess how a Spring annotation or property maps to Quarkus:
+`quarkit_reference_lookup` gives it the answer from a curated map. And it doesn't decide whether the
+migration is correct: `quarkit_validate` does, by comparing the migrated project with the original,
+entity by entity."
+
+*The loop, bottom (≈30 s)*
+"So the loop is: the agent edits the code, quarkit reads both projects and answers PASS or FAIL, and a FAIL
+has to be fixed before moving on. AI does the work, deterministic tools check it."
+
+*Bridge to the next segment (≈10 s)*
+"Let's look at what's inside that skill box."
+
+*If asked in chat:* today the skill calls `quarkit_validate` only in the persistence module, and the
+validators available are `project-setup` and `persistence`. More validators are on the roadmap (slide 3).
 
 ---
 

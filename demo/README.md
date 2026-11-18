@@ -125,6 +125,12 @@ same as a correct migration.
 Project: `$DEMO/spring-petclinic-live` (a fresh copy of PetClinic; `setup.sh` installed the skill in
 `.claude/skills/` and wrote `.quarkus-migration.yml` with `strategy: full-quarkus`).
 
+The skill never modifies its source: `spring-petclinic-live/` is read (only `migration-metadata/` is
+written there) and the migrated project goes to the sibling **`$DEMO/spring-petclinic-live-quarkus/`**
+(default target `<source-name>-quarkus/`, see `modules/planning/planning.md`). That is why the live run
+starts from a copy: started from `spring-petclinic/`, it would write into `spring-petclinic-quarkus/`,
+the pre-migrated project used in blocks c and e.
+
 The full migration takes ~19 minutes, so the proposal is to **kick it off at the start of the
 "Anatomy of the skill" segment (min 18)** and come back to it around min 40, when the persistence
 module has run and the `quarkit_validate` call is visible. To decide with Charles (open question in the run of show).
@@ -172,6 +178,12 @@ Flags from `acp run --help`; the `--mcp-server-config` shape follows the
 the **mcp** tab first). ⚠️ To rehearse: the HTTP form of `--mcp-server-config`, which would let us keep
 the server in the **mcp** tab.
 
+**Reset to run it again:**
+```bash
+rm -rf $DEMO/spring-petclinic-live-quarkus $DEMO/spring-petclinic-live/migration-metadata
+```
+(or delete both `spring-petclinic-live*` folders and re-run `setup.sh`, which recreates the copy).
+
 **Plan B:** show the tool calls from the pre-run session log (to capture, see [fallback/](fallback/)).
 
 ---
@@ -184,8 +196,8 @@ Project: `$DEMO/spring-petclinic-quarkus` (Spring Boot 4.1.0 → Quarkus 3.40.1.
 
 | # | Command | Say |
 |---|---------|-----|
-| 1 | `less spring-petclinic-quarkus/migration-summary.md` | What migrated, what didn't, and why. 9 modules, 6/6 verification checks. |
-| 2 | `ls spring-petclinic-quarkus/migration-reports/` | One JSON report per module. |
+| 1 | `less spring-petclinic-quarkus/migration-summary.md` | This is the agent's output as-is, no manual edits. The summary tells you what migrated, what didn't, and why: 9 modules, 6/6 verification checks, and the remaining work (skipped DB container tests, one disabled test, README and `k8s/` still describing Spring). |
+| 2 | `ls -lisa spring-petclinic-quarkus/migration-reports/` | One JSON report per module. |
 | 3 | `(cd spring-petclinic-quarkus && ./mvnw clean test)` | 82 tests, 0 failures, 5 skipped (4 need a Docker-API runtime for MySQL/Postgres, 1 disabled with a TODO). |
 | 4 | `(cd spring-petclinic-quarkus && ./mvnw quarkus:dev -Dquarkus.http.port=8090)` | Open http://localhost:8090: owners, pets, visits, vets, `?lang=es`. |
 | 5 | Show one Qute template next to the original Thymeleaf one | 11 templates converted, checked at build time. |
