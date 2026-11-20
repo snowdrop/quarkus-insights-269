@@ -12,7 +12,7 @@ Migrating an application to Quarkus is much more than swapping annotations: buil
 
 Charles Moulliard and Aurea Muñoz walk through how this evolved: from `mtool`, a rule-based CLI that analyzes and transforms Spring Boot projects with YAML rules and OpenRewrite, to an open-source agent skill that migrates step by step through gated modules, backed by **quarkit**, a Quarkus MCP server that lets the agent analyze code, look up Spring-to-Quarkus mappings and validate each step instead of improvising.
 
-Mostly live demos: the CLI, the anatomy of the skill, the MCP tools catching a broken migration, and Spring PetClinic running on Quarkus. We'll finish with what's next and how you can contribute new validators and mappings.
+Mostly live demos: the CLI, the anatomy of the skill, the MCP tools catching a broken migration, and a Spring Boot todo app running on Quarkus. We'll finish with what's next and how you can contribute new validators and mappings.
 
 ## Run of show
 
@@ -24,22 +24,22 @@ About 50 minutes of content plus Q&A, three slides in total, everything else liv
 | 3–15 | Charles | mtool CLI | `mtool analyze` with YAML rules, the query language (ANTLR), scanners (treesitter / openrewrite / maven), the JSON report, `mtool transform --dry-run` on `spring-boot-todo-app` | Terminal + Demo A |
 | 15–18 | Aurea | From rules to skills | Rules are reliable but can't cover every Spring pattern; AI covers more but improvises. So AI does the work and deterministic tools check it | Slides high-level: agent ↔ skill ↔ quarkit MCP diagram |
 | 18–30 | Aurea | Anatomy of the skill | `SKILL.md` critical rules, the decision gate table, modules loaded on demand, the `compile-fix` loop, the reporting module | Editor |
-| 40–47 | Aurea | The result | Full Spring Todo App migration (pre-run): 82 tests, Thymeleaf → Qute, `migration-summary.md`, app running | Terminal + browser/fallback if noboday speaks |
-| 30–40 | Charles | quarkit MCP live | `tools/list` with curl, `quarkit_analyze` on PetClinic, `quarkit_reference_lookup`. Then break a migrated entity (`Pet.visits` from `Set` to `List`: it compiles and the 82 tests still pass) and show `quarkit_validate persistence` failing | Terminal - Demo on the fallback premigrated spring-todo-app |
+| 40–47 | Aurea | The result | Full Spring Todo App migration (pre-run, ~5 min): 3 tests, Thymeleaf → Qute, `migration-summary.md`, app running | Terminal + browser/fallback if noboday speaks |
+| 30–40 | Charles | quarkit MCP live | `acp mcp tools`, `quarkit_analyze` on the todo app, `quarkit_reference_lookup`. Then break the migrated `Task` entity (`GenerationType.AUTO` → `IDENTITY`: it compiles, tests still pass) and show `quarkit_validate persistence` failing | Terminal - Demo on the fallback premigrated spring-todo-app |
 | 47–50 | Both | What's next + contribute | Roadmap, how to add a validator, a rule or a reference map; issue links | Slide 3: links + QR |
 | 50–60 | Both + hosts | Q&A | Questions from chat | — |
 
 ## Demo prep and fallbacks
 
-The full PetClinic migration takes about 19 minutes, so we show a pre-run result and only kick off a live run if time allows.
+The full todo app migration took about 5 minutes in rehearsal, so it can run live during the skill segment; the pre-run result in `demo/fallback/` covers us if it fails.
 
 | Demo | Owner | Before going live | Plan B |
 |---|---|---|---|
-| mtool analyze / transform | Charles | Install the version we'll demo (`jbang app install mtool@snowdrop/migration-tool`), pre-clone `spring-boot-todo-app` on a clean git branch | Recorded terminal output or a pre-generated JSON report |
-| quarkit MCP (curl) | Charles | MCP server running on `localhost:8080/mcp`, curl commands in a script | Same calls through the ACP client |
-| Broken entity → validator FAIL | Charles | Rehearse `demo/break-entity.patch` (`Pet.visits` `Set` → `List`, two FAILs) and the reset with `git checkout -- .` | Show the saved validator output in `demo/fallback/` |
+| mtool analyze / transform | Charles | `setup.sh` installs mtool 1.0.6 with jbang and clones `spring-boot-todo-app` on a clean `demo` branch | Recorded terminal output or a pre-generated JSON report |
+| quarkit MCP (acp) | Charles | MCP server running on `localhost:8080/mcp` (`acp mcp serve quarkit-http`), `acp mcp call` commands rehearsed | `-v` output or the server log |
+| Broken entity → validator FAIL | Charles | Rehearse `demo/break-entity.patch` (`Task.id` `AUTO` → `IDENTITY`, one FAIL) and the reset with `git apply -R` | Show the saved validator output in `demo/fallback/` |
 | Agent calling quarkit | Aurea | Agent configured with the quarkit MCP server (`--mcp-config` or ACP), so tool calls are visible | Show the tool calls from the pre-run session log |
-| PetClinic result | Aurea | Pre-migrated project built, DB container image pulled, port free | Video of the full migration |
+| Todo app result | Aurea | Pre-migrated project built, Podman/Docker running (Dev Services MySQL), port 8090 free | `demo/fallback/` project and `agent-log.md` |
 
 ## What's next / roadmap
 
@@ -61,6 +61,6 @@ These go on Slide 3 as "what we're working on", not as claims we demo.
 
 ## Links
 
-- [snowdrop/migration-tool](https://github.com/snowdrop/migration-tool)
+- [snowdrop/quarkit](https://github.com/snowdrop/quarkit)
 - [migrate-spring-to-quarkus skill](https://github.com/quarkusio/skills/tree/main/skills/migrate-spring-to-quarkus)
-- [Spring PetClinic](https://github.com/spring-projects/spring-petclinic)
+- [spring-boot-todo-app](https://github.com/snowdrop/quarkit/tree/main/applications/spring-boot-todo-app)

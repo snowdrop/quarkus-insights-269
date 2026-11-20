@@ -5,13 +5,12 @@ set -euo pipefail
 # Repos land in ../qi330-demo relative to this repo (override with DEMO_DIR=...).
 # Safe to re-run: existing clones are kept.
 #
-# Requirements: git, Java 21+, Maven (wrappers are used), jbang, jq, curl.
+# Requirements: git, Java 21+, Maven (wrappers are used), jbang, jq, rsync, Podman or Docker.
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 DEMO_DIR="${DEMO_DIR:-$(cd "$SCRIPT_DIR/../.." && pwd)/qi330-demo}"
 MTOOL_1_VERSION="1.0.6"
 MTOOL_VERSION="2.0.3"
-PETCLINIC_COMMIT="500158f732419217507c7656904b8e6aa1bcc0d6"
 mkdir -p "$DEMO_DIR"
 
 clone() { # clone <url> <dir> [ref]
@@ -51,28 +50,16 @@ SKILLS_DIR="$DEMO_DIR/quarkus-skills"
 clone https://github.com/quarkusio/skills.git "$SKILLS_DIR"
 SKILL_DIR="$SKILLS_DIR/skills/migrate-spring-to-quarkus"
 
-# --- (c)(d) Spring PetClinic, the source project (never modified) ---
-PETCLINIC_DIR="$DEMO_DIR/spring-petclinic"
-clone https://github.com/spring-projects/spring-petclinic.git "$PETCLINIC_DIR" "$PETCLINIC_COMMIT"
-
-# --- (d) copies for the live agent run, with the skill installed project-local ---
+# --- (b)(c)(d) the Spring source and the live agent run, with the skill installed project-local ---
 install_skill() { # install_skill <dir>: project-local skill + non-interactive config
   mkdir -p "$1/.claude/skills"
   cp -R "$SKILL_DIR" "$1/.claude/skills/"
   printf 'strategy: full-quarkus\nmode: non-interactive\n' > "$1/.quarkus-migration.yml"
 }
 
-# Spring PetClinic (the main demo)
-LIVE_DIR="$DEMO_DIR/spring-petclinic-live"
-if [ -d "$LIVE_DIR" ]; then
-  echo "spring-petclinic-live already exists, skipping."
-else
-  cp -R "$PETCLINIC_DIR" "$LIVE_DIR"
-  install_skill "$LIVE_DIR"
-fi
-
-# spring-boot-todo-app (a smaller app, faster to migrate live), taken pristine from the
-# quarkit release tag (block a may have transformed the working copy).
+# spring-boot-todo-app, taken pristine from the quarkit release tag (block a may have
+# transformed the working copy). The agent only reads it, so it is also the "source" of the
+# validator in block c. The agent writes its result to spring-boot-todo-app-live-quarkus/.
 TODO_LIVE_DIR="$DEMO_DIR/spring-boot-todo-app-live"
 if [ -d "$TODO_LIVE_DIR" ]; then
   echo "spring-boot-todo-app-live already exists, skipping."
@@ -83,11 +70,15 @@ else
   install_skill "$TODO_LIVE_DIR"
 fi
 
-# --- (c)(e) the pre-migrated PetClinic ---
-MIGRATED_DIR="$DEMO_DIR/spring-petclinic-quarkus"
-clone https://github.com/aureamunoz/spring-petclinic-quarkus.git "$MIGRATED_DIR"
-echo "Building spring-petclinic-quarkus..."
-(cd "$MIGRATED_DIR" && ./mvnw -q package -DskipTests)
+# --- (c)(e) the pre-migrated todo app, from this repo's fallback (unedited agent output + dev seed data) ---
+MIGRATED_DIR="$DEMO_DIR/spring-boot-todo-app-quarkus"
+if [ -d "$MIGRATED_DIR" ]; then
+  echo "spring-boot-todo-app-quarkus already exists, skipping."
+else
+  rsync -a --exclude target "$SCRIPT_DIR/fallback/spring-boot-todo-app-quarkus/" "$MIGRATED_DIR/"
+  echo "Building spring-boot-todo-app-quarkus..."
+  (cd "$MIGRATED_DIR" && ./mvnw -q package -DskipTests)
+fi
 
 # --- demo helpers next to the projects ---
 cp "$SCRIPT_DIR/mcp-config.json" "$SCRIPT_DIR/break-entity.patch" "$DEMO_DIR/"
@@ -108,6 +99,6 @@ Install and start the quarkit MCP server in its own terminal and leave it there
 Then check the available MCP Tools from another terminal:
   acp mcp tools quarkit-http
 
-Note: the Quarkit MCP server listens on 8080, so run the migrated PetClinic on another port
-(see demo/README.md, block e).
+Note: the Quarkit MCP server listens on 8080, so run the migrated todo app on 8090
+(see demo/README.md, block e). Podman or Docker must be running for its Dev Services MySQL.
 EOF

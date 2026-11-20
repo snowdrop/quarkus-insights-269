@@ -113,7 +113,7 @@ validators available are `project-setup` and `persistence`. More validators are 
 - New reference maps, rules and validators from the community
 
 **Try it / contribute** (with QR codes):
-- github.com/snowdrop/migration-tool
+- github.com/snowdrop/quarkit
 - github.com/quarkusio/skills → `skills/migrate-spring-to-quarkus`
 - This repo (demo commands to reproduce everything)
 
