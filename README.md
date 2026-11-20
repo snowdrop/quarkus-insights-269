@@ -24,8 +24,7 @@ new validators and mappings.
 
 | What | Link |
 |------|------|
-| Run of show (source of truth) | [docs/run-of-show.md](docs/run-of-show.md) |
-| Demo cheat sheet, block by block | [demo/README.md](demo/README.md) |
+| Run of show: segments, prep and fallbacks, demo blocks command by command | [demo/README.md](demo/README.md) |
 | Setup script | [demo/setup.sh](demo/setup.sh) |
 | MCP config for the agent | [demo/mcp-config.json](demo/mcp-config.json) |
 | The entity we break live | [demo/break-entity.patch](demo/break-entity.patch) |

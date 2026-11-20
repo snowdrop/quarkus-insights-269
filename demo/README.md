@@ -1,17 +1,40 @@
-# Demo cheat sheet
+# Quarkus Insights #330 — Run of show
 
-Five demo blocks, following [docs/run-of-show.md](../docs/run-of-show.md) (the source of truth).
-All paths assume `setup.sh` has run and `DEMO=<path to qi330-demo>`.
+Charles Moulliard · Aurea Muñoz
 
-Every demo uses the same app, `spring-boot-todo-app` (Spring MVC + Thymeleaf + Spring Data JPA + MySQL).
+The single entry point for the episode: the segments, who does what, prep and fallbacks, then the
+demo blocks command by command. The abstract and the links are in the [repo README](../README.md).
 
-| Block | Who | What |
-|-------|-----|------|
-| [a](#a--mtool-analyze--transform-charles) | Charles | `mtool analyze` / `transform --dry-run` on `spring-boot-todo-app` |
-| [d](#d--the-agent-calling-quarkit-aurea) | Aurea | Agent + skill + quarkit MCP, live migration, tool calls visible |
-| [e](#e--the-todo-app-on-quarkus-aurea) | Aurea | The pre-migrated todo app running on Quarkus |
-| [b](#b--quarkit-mcp-server-with-acp-charles) | Charles | quarkit MCP tools: `quarkit_analyze`, `quarkit_reference_lookup` |
-| [c](#c--break-a-migrated-entity-charles) | Charles | Break the migrated `Task` entity, `quarkit_validate persistence` fails |
+About 50 minutes of content plus Q&A, three slides in total, everything else live in the terminal or
+the editor. Every demo uses the same app, `spring-boot-todo-app` (Spring MVC + Thymeleaf + Spring
+Data JPA + MySQL). All paths assume `setup.sh` has run and `DEMO=<path to qi330-demo>`.
+
+## Run of show
+
+| Who | Segment | What we show | On screen | Demo |
+|---|---|---|---|---|
+| Both | The problem | Migrating is not swapping annotations: build, config, DI, persistence, views, tests | 5 Slides Migration is hard! | — |
+| Charles | mtool CLI | `mtool analyze` with YAML rules, the query language (ANTLR), scanners (treesitter / openrewrite / maven), the JSON report, `mtool transform --dry-run` on `spring-boot-todo-app` | Terminal + Demo A | [a](#a--mtool-analyze--transform-charles) |
+| Aurea | From rules to skills | Rules are reliable but can't cover every Spring pattern; AI covers more but improvises. So AI does the work and deterministic tools check it | Slides high-level: agent ↔ skill ↔ quarkit MCP diagram | — |
+| Aurea | Anatomy of the skill | `SKILL.md` critical rules, the decision gate table, modules loaded on demand, the `compile-fix` loop, the reporting module. The agent migrates the todo app live in the background, tool calls visible | Editor + agent tab | [d](#d--the-agent-calling-quarkit-aurea) |
+| Aurea | The result | Full Spring Todo App migration (pre-run, ~5 min): 3 tests, Thymeleaf → Qute, `migration-summary.md`, app running | Terminal + browser/fallback if nobody speaks | [e](#e--the-todo-app-on-quarkus-aurea) |
+| Charles | quarkit MCP live | `acp mcp tools`, `quarkit_analyze` on the todo app, `quarkit_reference_lookup`. Then break the migrated `Task` entity (`GenerationType.AUTO` → `IDENTITY`: it compiles, tests still pass) and show `quarkit_validate persistence` failing | Terminal - Demo on the fallback premigrated spring-todo-app | [b](#b--quarkit-mcp-server-with-acp-charles), [c](#c--break-a-migrated-entity-charles) |
+| Both | What's next + contribute | Roadmap, how to add a validator, a rule or a reference map; issue links | Slide 3: links + QR | — |
+| Both + hosts | Q&A | Questions from chat | — | — |
+
+## Prep and fallbacks
+
+The full todo app migration took about 5 minutes in rehearsal, so it can run live during the skill
+segment; the pre-run result in [fallback/](fallback/) covers us if it fails. Each demo block below
+has its own **Plan B** with the exact files.
+
+| Demo | Owner | Before going live | Plan B |
+|---|---|---|---|
+| [a](#a--mtool-analyze--transform-charles) mtool analyze / transform | Charles | `setup.sh` installs mtool 1.0.6 with jbang and clones `spring-boot-todo-app` on a clean `demo` branch | Recorded terminal output or a pre-generated JSON report |
+| [d](#d--the-agent-calling-quarkit-aurea) Agent calling quarkit | Aurea | Agent configured with the quarkit MCP server (`--mcp-config` or ACP), so tool calls are visible | Show the tool calls from the pre-run session log |
+| [e](#e--the-todo-app-on-quarkus-aurea) Todo app result | Aurea | Pre-migrated project built, Podman/Docker running (Dev Services MySQL), port 8090 free | `fallback/` project and `agent-log.md` |
+| [b](#b--quarkit-mcp-server-with-acp-charles) quarkit MCP (acp) | Charles | MCP server running on `localhost:8080/mcp` (`acp mcp serve quarkit-http`), `acp mcp call` commands rehearsed | `-v` output or the server log |
+| [c](#c--break-a-migrated-entity-charles) Broken entity → validator FAIL | Charles | Rehearse `break-entity.patch` (`Task.id` `AUTO` → `IDENTITY`, one FAIL) and the reset with `git apply -R` | Show the saved validator output in `fallback/` |
 
 ## Folders in `$DEMO`
 
