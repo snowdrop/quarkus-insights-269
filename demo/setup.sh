@@ -11,7 +11,6 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 DEMO_DIR="${DEMO_DIR:-$(cd "$SCRIPT_DIR/../.." && pwd)/qi330-demo}"
 MTOOL_1_VERSION="1.0.6"
 MTOOL_VERSION="2.0.3"
-ACP_VERSION="2.0.4"
 PETCLINIC_COMMIT="500158f732419217507c7656904b8e6aa1bcc0d6"
 mkdir -p "$DEMO_DIR"
 
@@ -44,8 +43,8 @@ git -C "$QUARKIT_DIR" switch -q -c demo 2>/dev/null || git -C "$QUARKIT_DIR" swi
 echo "Install mtool CLI - $MTOOL_1_VERSION"
 jbang app install --force "mtool@snowdrop/quarkit/$MTOOL_1_VERSION"
 
-echo "Install ACP client version - $ACP_VERSION ..."
-jbang app install --force "acp@smallrye/smallrye-acp-client/$ACP_VERSION"
+echo "Install latest ACP client version ..."
+jbang app install --force "acp@smallrye/smallrye-acp-client"
 
 # --- (d) the skill ---
 SKILLS_DIR="$DEMO_DIR/quarkus-skills"
@@ -87,7 +86,7 @@ Install and start the quarkit MCP server in its own terminal and leave it there
   acp mcp add -f -t http quarkit-http http://localhost:8080/mcp -- \\
     jbang --deps dev.snowdrop.mtool:references:2.0.3 mcp-http@snowdrop/quarkit
 
-  acp mcp serve -e ALLOWED_DIR=/$DEMO_DIR quarkit-http
+  acp mcp serve -e QUARKIT_ALLOWED_DIRS=$DEMO_DIR quarkit-http
 
 Then check the available MCP Tools from another terminal:
   acp mcp tools quarkit-http
