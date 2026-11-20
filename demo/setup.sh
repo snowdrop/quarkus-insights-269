@@ -45,7 +45,7 @@ echo "Install mtool CLI - $MTOOL_1_VERSION"
 jbang app install --force "mtool@snowdrop/quarkit/$MTOOL_1_VERSION"
 
 echo "Install ACP client version - $ACP_VERSION ..."
-jbang app install --force "acp@smallrye/smallrye-acp-client"
+jbang app install --force "acp@smallrye/smallrye-acp-client/$ACP_VERSION"
 
 # --- (d) the skill ---
 SKILLS_DIR="$DEMO_DIR/quarkus-skills"
