@@ -1,6 +1,6 @@
 # The migration prompt
 
-Run from the root of the Spring PetClinic copy (`qi330-demo/spring-petclinic-live`).
+Run from the root of the Spring todo app copy (`qi330-demo/spring-boot-todo-app-live`).
 
 ```
 Migrate this Spring Boot project to Quarkus
