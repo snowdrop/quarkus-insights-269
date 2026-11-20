@@ -55,15 +55,32 @@ SKILL_DIR="$SKILLS_DIR/skills/migrate-spring-to-quarkus"
 PETCLINIC_DIR="$DEMO_DIR/spring-petclinic"
 clone https://github.com/spring-projects/spring-petclinic.git "$PETCLINIC_DIR" "$PETCLINIC_COMMIT"
 
-# --- (d) a copy for the live agent run, with the skill installed project-local ---
+# --- (d) copies for the live agent run, with the skill installed project-local ---
+install_skill() { # install_skill <dir>: project-local skill + non-interactive config
+  mkdir -p "$1/.claude/skills"
+  cp -R "$SKILL_DIR" "$1/.claude/skills/"
+  printf 'strategy: full-quarkus\nmode: non-interactive\n' > "$1/.quarkus-migration.yml"
+}
+
+# Spring PetClinic (the main demo)
 LIVE_DIR="$DEMO_DIR/spring-petclinic-live"
 if [ -d "$LIVE_DIR" ]; then
   echo "spring-petclinic-live already exists, skipping."
 else
   cp -R "$PETCLINIC_DIR" "$LIVE_DIR"
-  mkdir -p "$LIVE_DIR/.claude/skills"
-  cp -R "$SKILL_DIR" "$LIVE_DIR/.claude/skills/"
-  printf 'strategy: full-quarkus\nmode: non-interactive\n' > "$LIVE_DIR/.quarkus-migration.yml"
+  install_skill "$LIVE_DIR"
+fi
+
+# spring-boot-todo-app (a smaller app, faster to migrate live), taken pristine from the
+# quarkit release tag (block a may have transformed the working copy).
+TODO_LIVE_DIR="$DEMO_DIR/spring-boot-todo-app-live"
+if [ -d "$TODO_LIVE_DIR" ]; then
+  echo "spring-boot-todo-app-live already exists, skipping."
+else
+  mkdir -p "$TODO_LIVE_DIR"
+  git -C "$QUARKIT_DIR" archive "$MTOOL_VERSION" applications/spring-boot-todo-app \
+    | tar -x --strip-components=2 -C "$TODO_LIVE_DIR"
+  install_skill "$TODO_LIVE_DIR"
 fi
 
 # --- (c)(e) the pre-migrated PetClinic ---

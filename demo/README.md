@@ -6,10 +6,10 @@ All paths assume `setup.sh` has run and `DEMO=<path to qi330-demo>`.
 | Block | Min | Who | What |
 |-------|-----|-----|------|
 | [a](#a--mtool-analyze--transform-charles) | 3–15 | Charles | `mtool analyze` / `transform --dry-run` on `spring-boot-todo-app` |
+| [e](#e--petclinic-on-quarkus-aurea) | 40–47 | Aurea | The pre-migrated PetClinic |
+| [d](#d--the-agent-calling-quarkit-aurea) | 18–30 → 40 | Aurea | Agent + skill + quarkit MCP, tool calls visible |
 | [b](#b--quarkit-mcp-server-with-curl-charles) | 30–34 | Charles | quarkit MCP with curl: `tools/list`, `quarkit_analyze`, `quarkit_reference_lookup` |
 | [c](#c--break-a-migrated-entity-charles) | 34–40 | Charles | Break a migrated PetClinic entity, `quarkit_validate persistence` fails |
-| [d](#d--the-agent-calling-quarkit-aurea) | 18–30 → 40 | Aurea | Agent + skill + quarkit MCP, tool calls visible |
-| [e](#e--petclinic-on-quarkus-aurea) | 40–47 | Aurea | The pre-migrated PetClinic |
 
 ## Before going live
 
@@ -125,8 +125,8 @@ same as a correct migration.
 Project: `$DEMO/spring-petclinic-live` (a fresh copy of PetClinic; `setup.sh` installed the skill in
 `.claude/skills/` and wrote `.quarkus-migration.yml` with `strategy: full-quarkus`).
 
-The skill never modifies its source: `spring-petclinic-live/` is read (only `migration-metadata/` is
-written there) and the migrated project goes to the sibling **`$DEMO/spring-petclinic-live-quarkus/`**
+The skill never modifies its source: `spring-petclinic-live/` is only read (the skill may
+write extraction data to `migration-metadata/` there; in our runs it went to the target) and the migrated project goes to the sibling **`$DEMO/spring-petclinic-live-quarkus/`**
 (default target `<source-name>-quarkus/`, see `modules/planning/planning.md`). That is why the live run
 starts from a copy: started from `spring-petclinic/`, it would write into `spring-petclinic-quarkus/`,
 the pre-migrated project used in blocks c and e.
@@ -141,9 +141,13 @@ module has run and the `quarkit_validate` call is visible. To decide with Charle
 
 ```bash
 cd $DEMO/spring-petclinic-live
-claude --mcp-config ../mcp-config.json --permission-mode acceptEdits \
+claude --mcp-config ../mcp-config.json --permission-mode auto \
   "Migrate this Spring Boot project to Quarkus"
 ```
+
+`--permission-mode auto` lets the agent run its `./mvnw`, `java` and file commands without asking,
+while still stopping risky actions. `acceptEdits` only covers file edits, so every Bash command
+would ask for approval on screen.
 
 `mcp-config.json` points the agent at the server already running in the **mcp** tab
 (`http://localhost:8080/mcp`), under the name `mtools` that the skill expects. Each tool call
@@ -183,6 +187,24 @@ the server in the **mcp** tab.
 rm -rf $DEMO/spring-petclinic-live-quarkus $DEMO/spring-petclinic-live/migration-metadata
 ```
 (or delete both `spring-petclinic-live*` folders and re-run `setup.sh`, which recreates the copy).
+
+### Alternative project: `spring-boot-todo-app` (smaller, faster)
+
+The same flow on the app from block a. `setup.sh` extracts it pristine from the mtool `2.0.2` tag into
+`$DEMO/spring-boot-todo-app-live`, with the skill and
+`.quarkus-migration.yml` already installed. The result goes to `$DEMO/spring-boot-todo-app-live-quarkus/`.
+
+```bash
+cd $DEMO/spring-boot-todo-app-live
+claude --mcp-config ../mcp-config.json --permission-mode auto \
+  "Migrate this Spring Boot project to Quarkus"
+```
+
+**Reset to run it again:**
+```bash
+rm -rf $DEMO/spring-boot-todo-app-live-quarkus $DEMO/spring-boot-todo-app-live/migration-metadata
+```
+(or delete both `spring-boot-todo-app-live*` folders and re-run `setup.sh`).
 
 **Plan B:** show the tool calls from the pre-run session log (to capture, see [fallback/](fallback/)).
 
