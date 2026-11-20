@@ -14,7 +14,7 @@ Charles Moulliard | IBM Sr. Principal Software Engineer - Quarkus
 
 ## Migration process looks simple ...
 
-![mtool: auditable pipeline](images/mtool-pipeline.png) <!-- .element: class="tall" -->
+![mtool: auditable pipeline](images/slide-02-mtool-pipeline.png) <!-- .element: class="tall" -->
 
 ---
 
@@ -22,7 +22,7 @@ Charles Moulliard | IBM Sr. Principal Software Engineer - Quarkus
 
 Treesitter, TreeSitter4j, Google Java Parser, OpenRewrite Parsers, ...
 
-![Code/File analyser](images/code-analyser.png)
+![Code/File analyser](images/slide-03-code-analyser.png)
 
 ---
 
@@ -30,7 +30,7 @@ Treesitter, TreeSitter4j, Google Java Parser, OpenRewrite Parsers, ...
 
 Rule engine, Antlr – query parser, Scanner, ...
 
-![Rule(s) processing](images/rules-processing.png)
+![Rule(s) processing](images/slide-04-rules-processing.png)
 
 ---
 
@@ -38,11 +38,11 @@ Rule engine, Antlr – query parser, Scanner, ...
 
 Openrewrite recipes
 
-![Transformation tool](images/transformation-tool.png)
+![Transformation tool](images/slide-05-transformation-tool.png)
 
 ---
 
-![Several modules to migrate](images/modules-to-migrate.png) <!-- .element: class="full" -->
+![Several modules to migrate](images/slide-06-modules-to-migrate.png) <!-- .element: class="full" -->
 
 ---
 
@@ -58,7 +58,7 @@ Openrewrite recipes
 
 ### Spring Boot => Quarkus using Openrewrite recipes
 
-![Spring Boot to Quarkus using OpenRewrite recipes](images/openrewrite-recipes.png)
+![Spring Boot to Quarkus using OpenRewrite recipes](images/slide-08-openrewrite-recipes.png)
 
 ---
 
@@ -111,7 +111,7 @@ Mix instructions between providers: AI + openrewrite + x.y.z
 
 ### Migrating between frameworks is hard
 
-![Migrating between frameworks is hard](images/migrating-frameworks-is-hard.png)
+![Migrating between frameworks is hard](images/slide-10-migrating-frameworks-is-hard.png)
 
 Note:
 The full picture looks like this. A deterministic sandwich around the AI.
@@ -148,9 +148,9 @@ Aurea Munoz Hernandez | IBM Principal Software Engineer - Quarkus
 
 ### How we built the Migration skill
 
-![Skill modules flow](images/skill-modules-flow.png) <!-- .element: class="strip" -->
+![Skill modules flow](images/slide-12-skill-modules-flow.png) <!-- .element: class="strip" -->
 
-![Skill modules and gates](images/skill-modules-gates.png) <!-- .element: class="half" -->
+![Skill modules and gates](images/slide-12-skill-modules-gates.png) <!-- .element: class="half" -->
 
 Note:
 You all know what a skill is: markdown the agent reads. Ours has one particularity: it gives the agent very little freedom.
@@ -167,13 +167,13 @@ So the skill controls how the agent works. But who checks the result?
 
 ## High level view
 
-![Migration high level view](images/migration-high-level-view.png)
+![Migration high level view](images/slide-13-migration-high-level-view.png)
 
 ---
 
 ## Anatomy of Quarkit
 
-![Anatomy of Quarkit](images/quarkit-anatomy.png)
+![Anatomy of Quarkit](images/slide-14-quarkit-anatomy.png)
 
 ---
 
@@ -181,7 +181,7 @@ So the skill controls how the agent works. But who checks the result?
 
 ### Hybrid: deterministic + AI
 
-![Hybrid: deterministic + AI](images/hybrid-deterministic-ai.png)
+![Hybrid: deterministic + AI](images/slide-15-hybrid-deterministic-ai.png)
 
 Note:
 The full picture looks like this. A deterministic sandwich around the AI.
