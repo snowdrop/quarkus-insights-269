@@ -24,21 +24,25 @@ clone() { # clone <url> <dir> [ref]
   fi
 }
 
-# --- (a) quarkit: rules (cookbook/) and spring-boot-todo-app, at the demoed release ---
+# --- (a) mtool: rules (cookbook/) and applications | mtool 1.x ---
+MTOOL_1_DIR="$DEMO_DIR/mtool-1.x"
+echo "clone https://github.com/snowdrop/quarkit.git $MTOOL_1_DIR $MTOOL_1_VERSION"
+clone https://github.com/snowdrop/quarkit.git "$MTOOL_1_DIR" "$MTOOL_1_VERSION"
+# Work on a branch so the todo app can be reset after `mtool transform`.
+git -C "$MTOOL_1_DIR" switch -q -c demo 2>/dev/null || git -C "$MTOOL_1_DIR" switch -q demo
+
+# --- (a) quarkit: rules (cookbook/) and applications | mtool 2.x ---
 QUARKIT_DIR="$DEMO_DIR/quarkit"
+echo "clone https://github.com/snowdrop/quarkit.git $QUARKIT_DIR $MTOOL_VERSION"
 clone https://github.com/snowdrop/quarkit.git "$QUARKIT_DIR" "$MTOOL_VERSION"
 # Work on a branch so the todo app can be reset after `mtool transform`.
 git -C "$QUARKIT_DIR" switch -q -c demo 2>/dev/null || git -C "$QUARKIT_DIR" switch -q demo
 
-# --- (a) mtool and acp CLI ---
+# --- (a) mtool, acp CLI & MCP server (stdio or http) ---
 # Without a version, the jbang alias installs today's early-access build.
 # jbang may ask to trust the catalog URL: answer it here, not on stage.
 echo "Install mtool CLI - $MTOOL_1_VERSION"
 jbang app install --force "mtool@snowdrop/quarkit/$MTOOL_1_VERSION"
-
-echo "Install Quarkit MCP Server - $MTOOL_VERSION"
-jbang app install --force "mcp@snowdrop/quarkit"
-jbang app install --force "mcp-http@snowdrop/quarkit"
 
 echo "Install ACP client version - $ACP_VERSION ..."
 jbang app install --force "acp@smallrye/smallrye-acp-client"
@@ -76,18 +80,18 @@ cat <<EOF
 
 Done. Everything is in: $DEMO_DIR
 
-Start the quarkit MCP server in its own terminal and leave it there
+Install and start the quarkit MCP server in its own terminal and leave it there
 (it stops when its stdin closes, so don't background it):
 
   cd $DEMO_DIR
-  jbang -Dquarkit.allowed-dirs=$DEMO_DIR \\
-        --deps dev.snowdrop.mtool:references:$MTOOL_VERSION \\
-        dev.snowdrop.mtool:mcp:$MTOOL_VERSION:runner
+  acp mcp add -f -t http quarkit-http http://localhost:8080/mcp -- \\
+    jbang --deps dev.snowdrop.mtool:references:2.0.3 mcp-http@snowdrop/quarkit
 
-Then check it from another terminal:
+  acp mcp serve -e ALLOWED_DIR=/$DEMO_DIR quarkit-http
 
-  $DEMO_DIR/mcp-call.sh tools/list | jq -r '.result.tools[].name'
+Then check the available MCP Tools from another terminal:
+  acp mcp tools quarkit-http
 
-Note: the MCP server listens on 8080, so run the migrated PetClinic on another port
+Note: the Quarkit MCP server listens on 8080, so run the migrated PetClinic on another port
 (see demo/README.md, block e).
 EOF
