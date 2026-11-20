@@ -86,7 +86,7 @@ Install and start the quarkit MCP server in its own terminal and leave it there
   acp mcp add -f -t http quarkit-http http://localhost:8080/mcp -- \\
     jbang --deps dev.snowdrop.mtool:references:2.0.3 mcp-http@snowdrop/quarkit
 
-  acp mcp serve -e ALLOWED_DIR=/$DEMO_DIR quarkit-http
+  acp mcp serve -e QUARKIT_ALLOWED_DIRS=/$DEMO_DIR quarkit-http
 
 Then check the available MCP Tools from another terminal:
   acp mcp tools quarkit-http
