@@ -5,13 +5,13 @@ All paths assume `setup.sh` has run and `DEMO=<path to qi330-demo>`.
 
 Every demo uses the same app, `spring-boot-todo-app` (Spring MVC + Thymeleaf + Spring Data JPA + MySQL).
 
-| Block | Min | Who | What |
-|-------|-----|-----|------|
-| [a](#a--mtool-analyze--transform-charles) | 3–15 | Charles | `mtool analyze` / `transform --dry-run` on `spring-boot-todo-app` |
-| [d](#d--the-agent-calling-quarkit-aurea) | 18–30 | Aurea | Agent + skill + quarkit MCP, live migration, tool calls visible |
-| [e](#e--the-todo-app-on-quarkus-aurea) | 40–47 | Aurea | The pre-migrated todo app running on Quarkus |
-| [b](#b--quarkit-mcp-server-with-acp-charles) | 30–34 | Charles | quarkit MCP tools: `quarkit_analyze`, `quarkit_reference_lookup` |
-| [c](#c--break-a-migrated-entity-charles) | 34–40 | Charles | Break the migrated `Task` entity, `quarkit_validate persistence` fails |
+| Block | Who | What |
+|-------|-----|------|
+| [a](#a--mtool-analyze--transform-charles) | Charles | `mtool analyze` / `transform --dry-run` on `spring-boot-todo-app` |
+| [d](#d--the-agent-calling-quarkit-aurea) | Aurea | Agent + skill + quarkit MCP, live migration, tool calls visible |
+| [e](#e--the-todo-app-on-quarkus-aurea) | Aurea | The pre-migrated todo app running on Quarkus |
+| [b](#b--quarkit-mcp-server-with-acp-charles) | Charles | quarkit MCP tools: `quarkit_analyze`, `quarkit_reference_lookup` |
+| [c](#c--break-a-migrated-entity-charles) | Charles | Break the migrated `Task` entity, `quarkit_validate persistence` fails |
 
 ## Folders in `$DEMO`
 
@@ -95,7 +95,7 @@ project goes to the sibling **`$DEMO/spring-boot-todo-app-live-quarkus/`** (defa
 from `spring-boot-todo-app-quarkus/`, the pre-migrated app of blocks c and e.
 
 The rehearsal run took **about 5 minutes** (2026-11-20). Proposal: kick it off at the start of the
-"Anatomy of the skill" segment (min 18) and come back to it when the persistence module has run and
+"Anatomy of the skill" segment and come back to it when the persistence module has run and
 the `quarkit_validate` call is visible.
 
 ### Option 1: Claude Code with `--mcp-config`
@@ -147,6 +147,34 @@ rm -rf $DEMO/spring-boot-todo-app-live-quarkus $DEMO/spring-boot-todo-app-live/m
 
 **Plan B:** [fallback/agent-log.md](fallback/agent-log.md), the session of the rehearsal run
 (persistence validation around line 357, 8/8 PASS).
+
+---
+
+## e — The todo app on Quarkus (Aurea)
+
+Project: `$DEMO/spring-boot-todo-app-quarkus` (Spring Boot 3.5.3 → Quarkus 3.40.1.2, full-quarkus),
+copied by `setup.sh` from [fallback/spring-boot-todo-app-quarkus](fallback/spring-boot-todo-app-quarkus/).
+
+It is the agent's output as-is. The only change after the migration is demo seed data
+(`import.sql`, loaded in dev mode only), so the app doesn't start empty.
+
+**Terminal tab: quarkit** (`cd $DEMO`)
+
+| # | Command | Say |
+|---|---------|-----|
+| 1 | `less spring-boot-todo-app-quarkus/migration-summary.md` | The summary tells you what migrated, what didn't, and why: every applicable module done, messaging skipped, 6/6 verification checks, and the remaining work (point `%prod` at the real MySQL, the unused `jjwt` dependency). |
+| 2 | `ls spring-boot-todo-app-quarkus/migration-reports/` | The JSON reports: validation (mtools project-setup and persistence) and reporting. |
+| 3 | `(cd spring-boot-todo-app-quarkus && ./mvnw clean test)` | 3 `@QuarkusTest` tests, MySQL started by Dev Services. |
+| 4 | `(cd spring-boot-todo-app-quarkus && ./mvnw quarkus:dev -Dquarkus.http.port=8090)` | Open http://localhost:8090: list, add and delete tasks, pagination. |
+| 5 | Show `templates/TaskResource/home.html` next to the original Thymeleaf `templates/home.html` | Type-safe Qute templates (`@CheckedTemplate`), checked at build time. |
+
+`-Dquarkus.http.port=8090` because the MCP server holds 8080 (the app's own port is 8081).
+
+**Key point:** about 5 minutes, one prompt, validated at each gate. Not a magic button: the summary
+lists the remaining work.
+
+**Plan B:** the same project in this repo, [fallback/spring-boot-todo-app-quarkus](fallback/spring-boot-todo-app-quarkus/),
+and the session log [fallback/agent-log.md](fallback/agent-log.md).
 
 ---
 
@@ -211,31 +239,3 @@ right above. Tests don't catch it; the validator does.
 same as a correct migration.
 
 **Plan B:** to capture after the rehearsal: the baseline and the FAIL output, in [fallback/](fallback/).
-
----
-
-## e — The todo app on Quarkus (Aurea)
-
-Project: `$DEMO/spring-boot-todo-app-quarkus` (Spring Boot 3.5.3 → Quarkus 3.40.1.2, full-quarkus),
-copied by `setup.sh` from [fallback/spring-boot-todo-app-quarkus](fallback/spring-boot-todo-app-quarkus/).
-
-It is the agent's output as-is. The only change after the migration is demo seed data
-(`import.sql`, loaded in dev mode only), so the app doesn't start empty.
-
-**Terminal tab: quarkit** (`cd $DEMO`)
-
-| # | Command | Say |
-|---|---------|-----|
-| 1 | `less spring-boot-todo-app-quarkus/migration-summary.md` | The summary tells you what migrated, what didn't, and why: every applicable module done, messaging skipped, 6/6 verification checks, and the remaining work (point `%prod` at the real MySQL, the unused `jjwt` dependency). |
-| 2 | `ls spring-boot-todo-app-quarkus/migration-reports/` | The JSON reports: validation (mtools project-setup and persistence) and reporting. |
-| 3 | `(cd spring-boot-todo-app-quarkus && ./mvnw clean test)` | 3 `@QuarkusTest` tests, MySQL started by Dev Services. |
-| 4 | `(cd spring-boot-todo-app-quarkus && ./mvnw quarkus:dev -Dquarkus.http.port=8090)` | Open http://localhost:8090: list, add and delete tasks, pagination. |
-| 5 | Show `templates/TaskResource/home.html` next to the original Thymeleaf `templates/home.html` | Type-safe Qute templates (`@CheckedTemplate`), checked at build time. |
-
-`-Dquarkus.http.port=8090` because the MCP server holds 8080 (the app's own port is 8081).
-
-**Key point:** about 5 minutes, one prompt, validated at each gate. Not a magic button: the summary
-lists the remaining work.
-
-**Plan B:** the same project in this repo, [fallback/spring-boot-todo-app-quarkus](fallback/spring-boot-todo-app-quarkus/),
-and the session log [fallback/agent-log.md](fallback/agent-log.md).

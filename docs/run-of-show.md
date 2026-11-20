@@ -18,16 +18,16 @@ Mostly live demos: the CLI, the anatomy of the skill, the MCP tools catching a b
 
 About 50 minutes of content plus Q&A, three slides in total, everything else live in the terminal or the editor.
 
-| Time (min) | Who | Segment | What we show | On screen |
-|---|---|---|---|---|
-| 0–3 | Both | The problem | Migrating is not swapping annotations: build, config, DI, persistence, views, tests | 5 Slides Migration is hard! |
-| 3–15 | Charles | mtool CLI | `mtool analyze` with YAML rules, the query language (ANTLR), scanners (treesitter / openrewrite / maven), the JSON report, `mtool transform --dry-run` on `spring-boot-todo-app` | Terminal + Demo A |
-| 15–18 | Aurea | From rules to skills | Rules are reliable but can't cover every Spring pattern; AI covers more but improvises. So AI does the work and deterministic tools check it | Slides high-level: agent ↔ skill ↔ quarkit MCP diagram |
-| 18–30 | Aurea | Anatomy of the skill | `SKILL.md` critical rules, the decision gate table, modules loaded on demand, the `compile-fix` loop, the reporting module | Editor |
-| 40–47 | Aurea | The result | Full Spring Todo App migration (pre-run, ~5 min): 3 tests, Thymeleaf → Qute, `migration-summary.md`, app running | Terminal + browser/fallback if noboday speaks |
-| 30–40 | Charles | quarkit MCP live | `acp mcp tools`, `quarkit_analyze` on the todo app, `quarkit_reference_lookup`. Then break the migrated `Task` entity (`GenerationType.AUTO` → `IDENTITY`: it compiles, tests still pass) and show `quarkit_validate persistence` failing | Terminal - Demo on the fallback premigrated spring-todo-app |
-| 47–50 | Both | What's next + contribute | Roadmap, how to add a validator, a rule or a reference map; issue links | Slide 3: links + QR |
-| 50–60 | Both + hosts | Q&A | Questions from chat | — |
+| Who | Segment | What we show | On screen |
+|---|---|---|---|
+| Both | The problem | Migrating is not swapping annotations: build, config, DI, persistence, views, tests | 5 Slides Migration is hard! |
+| Charles | mtool CLI | `mtool analyze` with YAML rules, the query language (ANTLR), scanners (treesitter / openrewrite / maven), the JSON report, `mtool transform --dry-run` on `spring-boot-todo-app` | Terminal + Demo A |
+| Aurea | From rules to skills | Rules are reliable but can't cover every Spring pattern; AI covers more but improvises. So AI does the work and deterministic tools check it | Slides high-level: agent ↔ skill ↔ quarkit MCP diagram |
+| Aurea | Anatomy of the skill | `SKILL.md` critical rules, the decision gate table, modules loaded on demand, the `compile-fix` loop, the reporting module | Editor |
+| Aurea | The result | Full Spring Todo App migration (pre-run, ~5 min): 3 tests, Thymeleaf → Qute, `migration-summary.md`, app running | Terminal + browser/fallback if noboday speaks |
+| Charles | quarkit MCP live | `acp mcp tools`, `quarkit_analyze` on the todo app, `quarkit_reference_lookup`. Then break the migrated `Task` entity (`GenerationType.AUTO` → `IDENTITY`: it compiles, tests still pass) and show `quarkit_validate persistence` failing | Terminal - Demo on the fallback premigrated spring-todo-app |
+| Both | What's next + contribute | Roadmap, how to add a validator, a rule or a reference map; issue links | Slide 3: links + QR |
+| Both + hosts | Q&A | Questions from chat | — |
 
 ## Demo prep and fallbacks
 

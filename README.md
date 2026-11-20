@@ -36,16 +36,16 @@ new validators and mappings.
 
 ## What we show
 
-| Min | Who | Segment |
-|-----|-----|---------|
-| 0–3 | Both | The problem (slide 1) |
-| 3–15 | Charles | `mtool` CLI: rules, query language, scanners, `analyze` / `transform --dry-run` |
-| 15–18 | Aurea | From rules to skills (slide 2) |
-| 18–30 | Aurea | Anatomy of the `migrate-spring-to-quarkus` skill |
-| 30–40 | Charles | quarkit MCP live: `acp mcp tools`, `quarkit_analyze`, `quarkit_reference_lookup`, a broken entity caught by `quarkit_validate` |
-| 40–47 | Aurea | The result: the todo app on Quarkus |
-| 47–50 | Both | What's next + contribute (slide 3) |
-| 50–60 | Both + hosts | Q&A |
+| Who | Segment |
+|-----|---------|
+| Both | The problem (slide 1) |
+| Charles | `mtool` CLI: rules, query language, scanners, `analyze` / `transform --dry-run` |
+| Aurea | From rules to skills (slide 2) |
+| Aurea | Anatomy of the `migrate-spring-to-quarkus` skill |
+| Aurea | The result: the todo app on Quarkus |
+| Charles | quarkit MCP live: `acp mcp tools`, `quarkit_analyze`, `quarkit_reference_lookup`, a broken entity caught by `quarkit_validate` |
+| Both | What's next + contribute (slide 3) |
+| Both + hosts | Q&A |
 
 ## Tools shown
 
