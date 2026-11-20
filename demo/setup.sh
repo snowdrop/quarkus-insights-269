@@ -11,7 +11,6 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 DEMO_DIR="${DEMO_DIR:-$(cd "$SCRIPT_DIR/../.." && pwd)/qi330-demo}"
 MTOOL_1_VERSION="1.0.6"
 MTOOL_VERSION="2.0.3"
-ACP_VERSION="2.0.4"
 PETCLINIC_COMMIT="500158f732419217507c7656904b8e6aa1bcc0d6"
 mkdir -p "$DEMO_DIR"
 
@@ -44,8 +43,8 @@ git -C "$QUARKIT_DIR" switch -q -c demo 2>/dev/null || git -C "$QUARKIT_DIR" swi
 echo "Install mtool CLI - $MTOOL_1_VERSION"
 jbang app install --force "mtool@snowdrop/quarkit/$MTOOL_1_VERSION"
 
-echo "Install ACP client version - $ACP_VERSION ..."
-jbang app install --force "acp@smallrye/smallrye-acp-client/$ACP_VERSION"
+echo "Install latest ACP client version ..."
+jbang app install --force "acp@smallrye/smallrye-acp-client"
 
 # --- (d) the skill ---
 SKILLS_DIR="$DEMO_DIR/quarkus-skills"
