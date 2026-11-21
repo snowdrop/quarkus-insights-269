@@ -1,11 +1,21 @@
 #!/usr/bin/env bash
+#
+# Export every page of a drawio file to PNG, one file per page named after the page.
+# Usage: ./export-to-png [file.drawio] [output dir]
+#   e.g. ./export-to-png quarkit-ai.drawio ../reveal/images
+#
 set -euo pipefail
 
 # Run from the script's own directory so relative paths work from anywhere
 cd "$(dirname "$0")"
 
-FILE=${1:-migration-is-hard.drawio}
-pages=$(grep -o '<diagram ' "$FILE" | wc -l)
-for ((i = 1; i <= pages; i++)); do
-  drawio -x -f png -p "$i" -o "${FILE%.drawio}-$i.png" "$FILE"
-done
+FILE=${1:-quarkit-ai.drawio}
+OUT_DIR=${2:-.}
+mkdir -p "$OUT_DIR"
+
+i=0
+while read -r name; do
+  i=$((i + 1))
+  [[ -n "$name" ]] || name="$(basename "${FILE%.drawio}")-$i"
+  drawio -x -f png -p "$i" -o "$OUT_DIR/$name.png" "$FILE"
+done < <(grep -o '<diagram [^>]*>' "$FILE" | sed -E 's/.*name="([^"]*)".*|.*/\1/')

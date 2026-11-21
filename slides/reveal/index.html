@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quarkus Insights #330</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600&display=swap">
+
+  <style>
+    :root {
+      --r-main-font: "IBM Plex Sans", Arial, sans-serif;
+      --r-heading-font: "IBM Plex Sans", Arial, sans-serif;
+      --r-code-font: "IBM Plex Mono", Consolas, monospace;
+      --r-main-font-size: 34px;
+      --r-heading-font-weight: 600;
+      --r-heading-text-transform: none;
+      --r-link-color: #0f62fe;
+      --accent: #0f62fe;
+    }
+    .reveal .slides section { text-align: left; }
+    .reveal h2, .reveal h3 { color: var(--accent); }
+    .reveal ul { display: block; font-weight: 300; }
+    .reveal li { margin: 0.25em 0; }
+    .reveal strong { font-weight: 600; }
+
+    /* Images: fit the 1600x900 slide */
+    .reveal section img { display: block; margin: 0.4em auto; max-height: 620px; border: 0; box-shadow: none; }
+    .reveal section img.tall { max-height: 720px; }
+    .reveal section img.full { max-height: 820px; }
+    .reveal section img.strip { max-height: 200px; }
+    .reveal section img.half { max-height: 420px; }
+
+    /* Cover slides: background picture + dark card with white text */
+    .reveal section.cover .logo { position: absolute; top: 0; left: 0; width: 220px; margin: 0; }
+    .reveal section.cover .card {
+      margin-top: 260px; padding: 40px 56px; max-width: 1100px;
+      background: rgba(10, 22, 52, 0.78); color: #fff; border-left: 8px solid var(--accent);
+    }
+    .reveal section.cover h1 { color: #fff; font-size: 2.4em; margin-bottom: 0.4em; }
+    .reveal section.cover p { font-weight: 300; margin: 0; }
+
+    /* Two columns (slide with the rule YAML) */
+    .reveal .columns { display: grid; grid-template-columns: 1fr 1.6fr; gap: 40px; align-items: start; }
+    .reveal .columns pre { width: 100%; font-size: 0.56em; margin: 0; }
+    .reveal .columns pre code { max-height: 640px; }
+    .reveal .source { font-size: 0.45em; margin-top: 0.6em; }
+
+    .reveal .stamp { position: absolute; right: 0; bottom: -40px; color: #da1e28; font-weight: 600; transform: rotate(-4deg); }
+  </style>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section data-markdown="slides.md"
+               data-separator="^\r?\n---\r?\n$"
+               data-separator-notes="^Note:"
+               data-charset="utf-8">
+      </section>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/markdown/markdown.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+  <script>
+    Reveal.initialize({
+      width: 1600,
+      height: 900,
+      hash: true,
+      slideNumber: 'c/t',
+      plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+    });
+  </script>
+</body>
+</html>
