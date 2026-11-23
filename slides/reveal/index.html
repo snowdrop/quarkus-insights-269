@@ -55,6 +55,10 @@
     .reveal section img.full { max-height: 760px; }
     .reveal section img.strip { max-height: 200px; }
     .reveal section img.half { max-height: 400px; }
+    /* Horizontal alignment: combine with a size class, e.g. class="half right" */
+    .reveal section img.left   { margin-left: 0;    margin-right: auto; }
+    .reveal section img.center { margin-left: auto; margin-right: auto; }
+    .reveal section img.right  { margin-left: auto; margin-right: 0; }
 
     /* Cover (title_bkg) and section (gradient_bkg) slides: white text, Quarkus logo */
     .reveal section.cover, .reveal section.section { color: #fff; }
@@ -94,9 +98,9 @@
 
 <img class="logo" src="images/quarkus-logo-reverse.svg" alt="Quarkus">
 
-# The problem: migration is hard !
+# AI-Assisted Migration Tools for Quarkus
 
-Charles Moulliard | IBM Sr. Principal Software Engineer - Quarkus
+Aurea Munoz Hernandez & Charles Moulliard
 
 ---
 
@@ -106,27 +110,27 @@ Charles Moulliard | IBM Sr. Principal Software Engineer - Quarkus
 
 ---
 
-### Code/File Analyser
+### Analyse :: parsing
 
-Treesitter, TreeSitter4j, Google Java Parser, OpenRewrite Parsers, ...
+![Code/File analyser](images/slide-03-code-analyser.png) <!-- .element: class="left" -->
 
-![Code/File analyser](images/slide-03-code-analyser.png)
-
----
-
-### Rule(s) processing
-
-Rule engine, Antlr – query parser, Scanner, ...
-
-![Rule(s) processing](images/slide-04-rules-processing.png)
+Code/File parsers: Treesitter, TreeSitter4j, Google Java Parser, OpenRewrite Parsers, ...
 
 ---
 
-### Transformation tool
+### Analyse :: Rule(s) processing
 
-Openrewrite recipes
+![Rule(s) processing](images/slide-04-rules-processing.png) <!-- .element: class="left" -->
 
-![Transformation tool](images/slide-05-transformation-tool.png)
+Rule engine: Antlr query parser combined with Scanner(s)
+
+---
+
+### Transformation :: Tool(s) & instructions
+
+![Transformation tool](images/slide-05-transformation-tool.png) <!-- .element: class="left" -->
+
+Technology: Openrewrite recipes
 
 ---
 
@@ -136,19 +140,15 @@ Openrewrite recipes
 
 <!-- .slide: class="section" data-background-image="images/quarkus-gradient-bkg.png" -->
 
-## Demo part
+## Demo part (Charles)
 
-- **mtool**: Generate Migration plan from Application analyzed
-- **mtool**: transform it using instructions
-- Run App migrated and observations !
+- **mtool**: Generate Migration plan from Spring Boot Application
+- **mtool**: Transform it using instructions
+- Run App migrated & observations !
 
 ---
 
-<!-- .slide: data-visibility="hidden" -->
-
-### Spring Boot => Quarkus using Openrewrite recipes
-
-![Spring Boot to Quarkus using OpenRewrite recipes](images/slide-08-openrewrite-recipes.png)
+![Spring Boot to Quarkus using OpenRewrite recipes](images/slide-08-openrewrite-recipes.png)  <!-- .element: class="full" -->
 
 ---
 
@@ -156,8 +156,8 @@ Openrewrite recipes
 <div>
 
 - Can another technology help us ?
-  - **=> AI** to the rescue
 - Mix **providers**: AI + openrewrite + etc
+
 - What we did here => **SKILL = Instructions + tools**
 - Mtool 2.x => **Quarkit**
 
@@ -167,9 +167,7 @@ Openrewrite recipes
 ```yaml
 - category: mandatory
   description: SpringBoot to Quarkus
-  labels:
-  - quarkit.io/source=springboot
-  - quarkit.io/target=quarkus
+  ...
   ruleID: 011-springboot-replace-dependency-jpa
   when:
     condition: |
@@ -228,13 +226,13 @@ The full picture looks like this. A deterministic sandwich around the AI. Before
 
 # Quarkit architecture & vision
 
-Aurea Munoz Hernandez | IBM Principal Software Engineer - Quarkus
+Aurea Munoz Hernandez
 
 ---
 
 ### How we built the Migration skill
 
-![Skill modules flow](images/slide-12-skill-modules-flow.png) <!-- .element: class="strip" -->
+![Skill modules flow](images/slide-12-skill-modules-flow.png) <!-- .element: class="left" -->
 
 ![Skill modules and gates](images/slide-12-skill-modules-gates.png) <!-- .element: class="half" -->
 
