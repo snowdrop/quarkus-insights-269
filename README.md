@@ -37,13 +37,13 @@ new validators and mappings.
 
 | Who | Segment |
 |-----|---------|
-| Both | The problem (slide 1) |
+| Charles | The problem: Migration is hard |
 | Charles | `mtool` CLI: rules, query language, scanners, `analyze` / `transform --dry-run` |
-| Aurea | From rules to skills (slide 2) |
+| Aurea | From rules to skills |
 | Aurea | Anatomy of the `migrate-spring-to-quarkus` skill |
 | Aurea | The result: the todo app on Quarkus |
 | Charles | quarkit MCP live: `acp mcp tools`, `quarkit_analyze`, `quarkit_reference_lookup`, a broken entity caught by `quarkit_validate` |
-| Both | What's next + contribute (slide 3) |
+| Both | What's next + contribute |
 | Both + hosts | Q&A |
 
 ## Tools shown
