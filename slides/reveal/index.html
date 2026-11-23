@@ -134,10 +134,6 @@ Technology: Openrewrite recipes
 
 ---
 
-![Several modules to migrate](images/slide-06-modules-to-migrate.png) <!-- .element: class="full" -->
-
----
-
 <!-- .slide: class="section" data-background-image="images/quarkus-gradient-bkg.png" -->
 
 ## Demo part (Charles)
@@ -193,6 +189,10 @@ Add AI instructions
 
 Mix instructions between providers: AI + openrewrite + x.y.z
 
+<!-- -&#45;&#45;-->
+
+<!--![Several modules to migrate](images/slide-06-modules-to-migrate.png) &lt;!&ndash; .element: class="full" &ndash;&gt;-->
+
 ---
 
 <!-- .slide: data-visibility="hidden" -->
@@ -234,13 +234,17 @@ Aurea Munoz Hernandez
 
 ![Migration high level view](images/slide-13-migration-high-level-view.png)
 
----
+Note:
+          The full picture looks like this.
+          On one side, the skill. I'll go into more detail on the next slide.
+          And in the middle, the agent, or the harness. So you can pick the agent you prefer: Bob, Codex, Claude Code, whatever.
+          There are a lot of them, and switching is easy
+          Both, the agent with the skill do the work that needs context: controller logic, template conversion, config reasoning, strategy decisions, tests.
+          Tokens, flexible, variable.
 
-<!-- .slide: class="section" data-background-image="images/quarkus-gradient-bkg.png" -->
-
-## Demo part (Aurea)
-
-- TODO
+          On the other side, MCP servers. Here just one: quarkit. It gives the agent deterministic tools.
+          They don't use any tokens, so they're repeatable and we can audit them.
+          The agent uses them to analyze the application like Charles showed with mtool, and to verify what it did.
 
 ---
 
@@ -248,13 +252,41 @@ Aurea Munoz Hernandez
 
 ![Anatomy of Quarkit](images/slide-14-quarkit-anatomy.png)
 
+Note:
+Now let's look at the skill in a bit more detail.
+
+[izquierda → derecha] This is what a real run looks like. A Spring Boot project goes in, the agent does its work, and what comes out is a Quarkus project that is migrated and also verified, because validators check the migration against rules we defined.
+
+[Migration Artifacts] And for traceability, every module writes a report: what happened, which files changed. From those reports we build a migration summary of the whole run.
+
+[Modules] At the center is the skill. If you look at the modules, they're very close to what Charles described with mtool.
+
+[Prerequisite] First, a basic check of your tooling: the right JDK and so on. If it fails, the skill stops. That's a hard stop on purpose: without the tooling we can't verify anything the agent does.
+
+[Planning] Then planning. The agent analyzes the project, finds out which features it uses, and writes a migration spec. It also asks you which path you want. For persistence, for example: Panache with the repository pattern, active record, or keep your plain JPA entities.
+
+[Build] Build is what Charles showed before: find the Spring Boot starters and replace them with Quarkus extensions.
+
+[Application Code] Then the application code, in sub-modules, because an application has layers: persistence, messaging, frontend. They're migrated one by one.
+
+And this is the key: each module has a gate. If the agent finds that feature in your project, the module runs. If not, it's skipped.
+
+[Testing, Cleanup] Then the tests are migrated, and a cleanup removes whatever is no longer needed.
+
+[References] The agent doesn't guess the mappings. It uses references: annotation, configuration and dependency mappings, the same kind of maps Charles showed earlier.
+
+[MCP Tools] And here is the MCP part. The agent is instructed to call the quarkit validators. They return which checks passed and which failed, with zero tokens. It's a feedback loop: if a check fails, the agent fixes it and validates again.
+
+Let me show you how this looks on a real app.
+
 ---
 
 <!-- .slide: class="section" data-background-image="images/quarkus-gradient-bkg.png" -->
 
-## Demo (Aurea)
+## Demo - Migration & Result review
 
-- AI migration review
+          claude --mcp-config ../mcp-config.json --permission-mode auto
+          "Migrate this project from Spring Boot to Quarkus"
 
 ---
 
