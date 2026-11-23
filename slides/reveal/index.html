@@ -88,6 +88,14 @@
     .reveal section.demo-command pre { font-size: 0.9em; width: 70%; text-align: left; margin-left: 0; margin-right: auto; }
 
     .reveal .stamp { position: absolute; right: 450px; bottom: 300px; color: var(--quarkus-red); font-weight: 600; transform: rotate(-25deg); }
+    /* Useful links: text + URL on the left, QR code (generated from data-qr) on the right */
+    .reveal section.links table { width: auto; margin: 0; font-size: 0.8em; border-collapse: collapse; }
+    .reveal section.links thead { display: none; }
+    .reveal section.links td { vertical-align: middle; padding: 26px 0; border-bottom: 2px solid rgba(70, 149, 235, 0.5); }
+    .reveal section.links tr:last-child td { border-bottom: 0; }
+    .reveal section.links td:first-child { padding-right: 120px; }
+    .reveal section.links td:last-child { width: 170px; }
+    .reveal section.links .qr img, .reveal section.links .qr canvas { width: 170px; height: 170px; margin: 0 0 0 auto; }
   </style>
 </head>
 <body>
@@ -342,6 +350,18 @@ Aurea & Charles
 
 ---
 
+<!-- .slide: id="links" class="links" -->
+
+## Useful links
+
+| Link | QR code |
+|---|---|
+| **Quarkit**<br>[github.com/snowdrop/quarkit](https://github.com/snowdrop/quarkit) | <div class="qr" data-qr="https://github.com/snowdrop/quarkit"></div> |
+| **Skills**<br>[github.com/quarkusio/skills/…/migrate-spring-to-quarkus](https://github.com/quarkusio/skills/tree/main/skills/migrate-spring-to-quarkus) | <div class="qr" data-qr="https://github.com/quarkusio/skills/tree/main/skills/migrate-spring-to-quarkus"></div> |
+| **Insights 330**<br>[github.com/snowdrop/quarkus-insights-330](https://github.com/snowdrop/quarkus-insights-330) | <div class="qr" data-qr="https://github.com/snowdrop/quarkus-insights-330"></div> |
+
+---
+
 <!-- .slide: class="cover" data-background-image="images/quarkus-title-bkg.png" -->
 
 <img class="logo" src="images/quarkus-logo-reverse.svg" alt="Quarkus">
@@ -349,6 +369,8 @@ Aurea & Charles
 # Q/A
 
 Aurea & Charles
+
+---
         </textarea>
       </section>
     </div>
@@ -358,6 +380,7 @@ Aurea & Charles
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/markdown/markdown.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script>
     Reveal.initialize({
       width: 1600,
@@ -365,6 +388,12 @@ Aurea & Charles
       hash: true,
       slideNumber: 'c/t',
       plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+    });
+    // Render a QR code into every element carrying data-qr="<url>" once the Markdown slides exist
+    Reveal.on('ready', () => {
+      document.querySelectorAll('[data-qr]').forEach(el =>
+        new QRCode(el, { text: el.dataset.qr, width: 340, height: 340,
+                         colorDark: '#0d1c2c', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }));
     });
   </script>
 </body>
