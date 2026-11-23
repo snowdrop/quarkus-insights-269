@@ -1,0 +1,119 @@
+type: "specs.openrewrite.org/v1beta/recipe"
+name: "dev.snowdrop.openrewrite.java.SpringToQuarkus"
+displayName: "Replace the SpringBoot parent dependency with Quarkus BOM within the\
+  \ pom.xml file"
+description: "Replace the SpringBoot parent dependency with Quarkus BOM within the\
+  \ pom.xml file."
+recipeList:
+- org.openrewrite.maven.AddManagedDependency:
+    groupId: "io.quarkus.platform"
+    artifactId: "quarkus-bom"
+    version: "3.31.3"
+    type: "pom"
+    scope: "import"
+    addToRootPom: false
+- org.openrewrite.maven.AddDependency:
+    groupId: "io.quarkus"
+    artifactId: "quarkus-core"
+    version: "3.31.3"
+- org.openrewrite.maven.AddDependency:
+    groupId: "io.quarkus"
+    artifactId: "quarkus-arc"
+    version: "3.31.3"
+- org.openrewrite.maven.AddDependency:
+    groupId: "io.quarkus"
+    artifactId: "quarkus-smallrye-openapi"
+    version: "3.31.3"
+- org.openrewrite.maven.RemovePlugin:
+    groupId: "org.springframework.boot"
+    artifactId: "spring-boot-maven-plugin"
+- org.openrewrite.java.dependencies.UpgradeDependencyVersion:
+    groupId: "org.springframework.boot"
+    artifactId: "*"
+    newVersion: "3.5.8"
+    overrideManagedVersion: "true"
+- "dev.snowdrop.mtool.openrewrite.recipe.spring.AddQuarkusMavenPlugin"
+- "org.openrewrite.quarkus.spring.RemoveSpringBootParent"
+- org.openrewrite.maven.AddDependency:
+    groupId: "io.quarkus"
+    artifactId: "quarkus-spring-data-jpa"
+    version: "3.31.3"
+- org.openrewrite.maven.AddDependency:
+    groupId: "io.quarkus"
+    artifactId: "quarkus-jdbc-mysql"
+    version: "3.31.3"
+- org.openrewrite.maven.AddDependency:
+    groupId: "io.quarkus"
+    artifactId: "quarkus-spring-web"
+    version: "3.31.3"
+- org.openrewrite.maven.AddDependency:
+    groupId: "io.quarkus"
+    artifactId: "quarkus-spring-data-rest"
+    version: "3.31.3"
+- org.openrewrite.maven.AddDependency:
+    groupId: "io.quarkus"
+    artifactId: "quarkus-rest"
+    version: "3.31.3"
+- org.openrewrite.maven.AddDependency:
+    groupId: "io.quarkus"
+    artifactId: "quarkus-rest-jackson"
+    version: "3.31.3"
+- org.openrewrite.maven.AddDependency:
+    groupId: "io.quarkus"
+    artifactId: "quarkus-smallrye-health"
+    version: "3.31.3"
+- org.openrewrite.maven.AddDependency:
+    groupId: "io.quarkus"
+    artifactId: "quarkus-junit5"
+    version: "3.31.3"
+    scope: "test"
+- org.openrewrite.java.ChangeType:
+    oldFullyQualifiedTypeName: "org.springframework.boot.test.context.SpringBootTest"
+    newFullyQualifiedTypeName: "io.quarkus.test.junit.QuarkusTest"
+- org.openrewrite.java.ChangeType:
+    oldFullyQualifiedTypeName: "org.springframework.stereotype.Controller"
+    newFullyQualifiedTypeName: "org.springframework.web.bind.annotation.RestController"
+- org.openrewrite.properties.ChangePropertyKey:
+    oldPropertyKey: "spring.datasource.url"
+    newPropertyKey: "%prod.quarkus.datasource.jdbc.url"
+- org.openrewrite.properties.ChangePropertyKey:
+    oldPropertyKey: "spring.datasource.username"
+    newPropertyKey: "%prod.quarkus.datasource.username"
+- org.openrewrite.properties.ChangePropertyKey:
+    oldPropertyKey: "spring.datasource.password"
+    newPropertyKey: "%prod.quarkus.datasource.password"
+- org.openrewrite.properties.ChangePropertyKey:
+    oldPropertyKey: "spring.datasource.driver-class-name"
+    newPropertyKey: "quarkus.datasource.jdbc.driver"
+- org.openrewrite.properties.AddProperty:
+    property: "quarkus.datasource.db-kind"
+    value: "mysql"
+    delimiter: "="
+- org.openrewrite.properties.AddProperty:
+    property: "quarkus.hibernate-orm.schema-management.strategy"
+    value: "drop-and-create"
+    delimiter: "="
+- org.openrewrite.properties.AddProperty:
+    property: "quarkus.hibernate-orm.log.sql"
+    value: "true"
+    delimiter: "="
+- org.openrewrite.properties.DeleteProperty:
+    propertyKey: "spring.*"
+- dev.snowdrop.mtool.openrewrite.recipe.java.RemoveMethodParameters:
+    methodPattern: "com.todo.app.controller.TaskController viewHome(..)"
+- dev.snowdrop.mtool.openrewrite.recipe.java.ReplaceMethodBodyContent:
+    methodPattern: "com.todo.app.controller.TaskController viewHome(..)"
+    replacement: "List<Task> tasks = taskService.getAllTasks();\nreturn ResponseEntity.ok(tasks);\n"
+- dev.snowdrop.mtool.openrewrite.recipe.java.ChangeMethodReturnType:
+    methodPattern: "com.todo.app.controller.TaskController viewHome(..)"
+    newReturnType: "org.springframework.http.ResponseEntity<List<Task>>"
+- dev.snowdrop.mtool.openrewrite.recipe.java.ReplaceMethodBodyContent:
+    methodPattern: "com.todo.app.controller.TaskController viewIndexPage(..)"
+    replacement: "return RestResponse.temporaryRedirect(new URI(\"/home\"));\n"
+    newImports: "java.net.URI"
+- dev.snowdrop.mtool.openrewrite.recipe.java.ChangeMethodReturnType:
+    methodPattern: "com.todo.app.controller.TaskController viewIndexPage(..)"
+    newReturnType: "org.jboss.resteasy.reactive.RestResponse<String>"
+- dev.snowdrop.mtool.openrewrite.recipe.java.AddThrowMethodException:
+    methodPattern: "com.todo.app.controller.TaskController viewIndexPage(..)"
+    newException: "java.net.URISyntaxException"
