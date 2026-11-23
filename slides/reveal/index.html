@@ -83,6 +83,7 @@
     .reveal .columns pre { width: 100%; font-size: 0.56em; margin: 0; }
     .reveal .columns pre code { max-height: 640px; }
     .reveal .source { font-size: 0.45em; margin-top: 0.6em; }
+    .reveal section.demo-command pre { font-size: 0.9em; width: 100%; }
 
     .reveal .stamp { position: absolute; right: 450px; bottom: 300px; color: var(--quarkus-red); font-weight: 600; transform: rotate(-25deg); }
   </style>
@@ -281,12 +282,14 @@ Let me show you how this looks on a real app.
 
 ---
 
-<!-- .slide: class="section" data-background-image="images/quarkus-gradient-bkg.png" -->
+<!-- .slide: class="section demo-command" data-background-image="images/quarkus-gradient-bkg.png" -->
 
-## Demo - Migration & Result review
+## Demo - Migration & Result review <!-- .element: style="margin-bottom: 1.5em;" -->
+
 
           claude --mcp-config ../mcp-config.json --permission-mode auto
           "Migrate this project from Spring Boot to Quarkus"
+
 
 ---
 
