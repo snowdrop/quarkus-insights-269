@@ -83,6 +83,8 @@
     .reveal .columns pre { width: 100%; font-size: 0.56em; margin: 0; }
     .reveal .columns pre code { max-height: 640px; }
     .reveal .source { font-size: 0.45em; margin-top: 0.6em; }
+
+    /* Format the code of the bash commands */
     .reveal section.demo-command pre { font-size: 0.9em; width: 70%; text-align: left; margin-left: 0; margin-right: auto; }
 
     .reveal .stamp { position: absolute; right: 450px; bottom: 300px; color: var(--quarkus-red); font-weight: 600; transform: rotate(-25deg); }
@@ -144,7 +146,7 @@ Technology: Openrewrite recipes
 - Run App migrated & observations !
 
 ---
-
+<!-- .slide: data-visibility="hidden" -->
 ![Spring Boot to Quarkus using OpenRewrite recipes](images/slide-08-openrewrite-recipes.png)  <!-- .element: class="full" -->
 
 ---
@@ -312,13 +314,13 @@ Aurea & Charles
 
 ---
 
-## Roadmap & future
+## Roadmap
 
 <p class="stamp">Subject to change</p>
 
 - **Integrate** the MCP **tools** within the SKILLS
 - **Add** new **module/validator/checks** to support additional "starters"
-- Package the SKILL / MCP As **Agent Plugin**
+- Package the SKILL / MCP as **Agent Plugin**
 - **Develop** additional **tools** for analyze/planning parts
 - Measure **token cost & time**, with and without the Quarkit tools
 - **Resumable state**: pick up a migration where it stopped
