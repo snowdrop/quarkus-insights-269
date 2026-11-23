@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "mtools": {
+    "quarkit": {
       "type": "http",
       "url": "http://localhost:8080/mcp"
     }
