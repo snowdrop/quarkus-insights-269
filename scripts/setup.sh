@@ -8,9 +8,11 @@ set -euo pipefail
 # Requirements: git, Java 21+, Maven (wrappers are used), jbang, jq, Podman or Docker.
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"   # <repo>/scripts
+INSIGHTS_DIR="$(dirname "$SCRIPT_DIR")"        # <repo> = quarkus-insights-330
 # Default: qi330-demo/ inside this repo, resolved from the script location (not the current directory).
-DEMO_DIR="${DEMO_DIR:-$(dirname "$SCRIPT_DIR")/qi330-demo}"
-echo "Demo directory: $DEMO_DIR"
+DEMO_DIR="$INSIGHTS_DIR/qi330-demo"
+echo "Insight dir: $INSIGHTS_DIR"
+echo "Demo dir: $DEMO_DIR"
 
 # Start from a clean state: remove every folder under qi330-demo (files such as .gitkeep are kept)
 if [ -d "$DEMO_DIR" ]; then
@@ -64,7 +66,7 @@ setup_demo() {
       cp "$SCRIPT_DIR/todo-app-rewrite.patch" "$dir" ;;
     quarkit)
       install_skill "$dir/spring-boot-todo-app"
-      cp "$SCRIPT_DIR/break-entity.patch" "$SCRIPT_DIR/mcp-config.json" "$dir"
+      cp "$SCRIPT_DIR/break-entity.patch" "$dir"
       cd "$dir/spring-boot-todo-app-quarkus-migrated" && ./mvnw -q package -DskipTests ;;
   esac
 }
@@ -87,7 +89,7 @@ echo "SKILL_DIR=$SKILL_DIR"
 # Copy the applications of this repo to the folders used by the different demos:
 #   qi330-demo/mtool   : deterministic migration (openrewrite), needs the cookbook rules
 #   qi330-demo/quarkit : AI assisted migration (MCP), needs the skill installed in the app
-APPS_DIR="$SCRIPT_DIR/../applications"
+APPS_DIR="$INSIGHTS_DIR/applications"
 
 setup_demo mtool
 setup_demo quarkit
