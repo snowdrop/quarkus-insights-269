@@ -2,16 +2,18 @@
 set -euo pipefail
 
 # Prepares everything for the Quarkus Insights #330 demos.
-# Repos land in ../qi330-demo relative to this repo (override with DEMO_DIR=...).
+# Repos land in qi330-demo/ inside this repo (override with DEMO_DIR=...).
 # Safe to re-run: existing clones are kept.
 #
-# Requirements: git, Java 21+, Maven (wrappers are used), jbang, jq, rsync, Podman or Docker.
+# Requirements: git, Java 21+, Maven (wrappers are used), jbang, jq, Podman or Docker.
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-DEMO_DIR="${DEMO_DIR:-$(cd "$SCRIPT_DIR/../.." && pwd)/qi330-demo}"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"   # <repo>/scripts
+# Default: qi330-demo/ inside this repo, resolved from the script location (not the current directory).
+DEMO_DIR="${DEMO_DIR:-$(dirname "$SCRIPT_DIR")/qi330-demo}"
+echo "Demo directory: $DEMO_DIR"
+exit
 MTOOL_1_VERSION="1.0.6"
 MTOOL_VERSION="2.0.3"
-mkdir -p "$DEMO_DIR"
 
 clone() { # clone <url> <dir> [ref]
   if [ -d "$2" ]; then
@@ -75,7 +77,7 @@ MIGRATED_DIR="$DEMO_DIR/spring-boot-todo-app-quarkus"
 if [ -d "$MIGRATED_DIR" ]; then
   echo "spring-boot-todo-app-quarkus already exists, skipping."
 else
-  rsync -a --exclude target "$SCRIPT_DIR/fallback/spring-boot-todo-app-quarkus/" "$MIGRATED_DIR/"
+  rsync -a --exclude target "$SCRIPT_DIR/../applications/spring-boot-todo-app-quarkus/" "$MIGRATED_DIR/"
   echo "Building spring-boot-todo-app-quarkus..."
   (cd "$MIGRATED_DIR" && ./mvnw -q package -DskipTests)
 fi

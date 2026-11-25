@@ -20,13 +20,13 @@ Mostly live demos: the CLI, the anatomy of the skill, the MCP tools catching a b
 and a Spring Boot todo app running on Quarkus. We'll finish with what's next and how you can contribute
 new validators and mappings.
 
-## Contents
+## Presentation
 
 Open the quarkus insight [slides](./slides/reveal/index.html) in a browser.
 
 ## How to replay the demos
 
-See demo README [instructions](./demo/README.md)
+See demos README [instructions](./demo/README.md)
 
 ## Tools shown
 
