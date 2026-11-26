@@ -16,7 +16,7 @@ cd quarkus-insights-330
 ```
 
 > **Warning**: Don't forget to set your AI LLM/Provider API Key before running `acp run` or the coding agent.
-> By example: `export ANTHROPIC_API_KEY=<your key>` (plus the base URL if your provider needs one).
+> By example: `export ANTHROPIC_API_KEY=<your key>` (plus the base URL if your provider needs one: `ANTHROPIC_BASE_URL`).
 
 Create the different projects, install mcp, acp tools using this script
 
