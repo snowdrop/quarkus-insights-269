@@ -40,7 +40,7 @@ clone() {
 install_skill() {
   mkdir -p "$1/.claude/skills"
   cp -R "$SKILL_DIR" "$1/.claude/skills/"
-  printf 'strategy: full-quarkus\nmode: non-interactive\n' > "$1/.quarkus-migration.yml"
+  printf 'strategy: full-quarkus\nmode: non-interactive\nquarkus_version: 3.40.1.1\njava_version: 21' > "$1/.quarkus-migration.yml"
 }
 
 # copy_app <name under applications/> <target dir> [dest name]

@@ -4,7 +4,7 @@ INSIGHTS_DIR="$(dirname "$SCRIPT_DIR")"        # <repo> = quarkus-insights-330
 DEMO_DIR="$INSIGHTS_DIR/qi330-demo"
 
 export QUARKIT_ALLOWED_DIRS=$DEMO_DIR/quarkit
-export SKILL_DIR=$DEMO_DIR/quarkus-skills/
+export SKILL_DIR=$DEMO_DIR/quarkus-skills
 export ANALYZER_RULES_REPO_URL="https://github.com/snowdrop/migration-tool/blob/main/cookbook/rules/quarkus-spring/%s.yaml"
 
 echo "QUARKIT_ALLOWED_DIRS: $QUARKIT_ALLOWED_DIRS"

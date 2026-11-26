@@ -15,11 +15,8 @@ git clone https://github.com/snowdrop/quarkus-insights-330.git
 cd quarkus-insights-330
 ```
 
-> **Note**: Set the environment variables in every terminal tab required for the demo using the script:
-> `<repo_cloned>/scripts/setenv.sh`
-
-> **Warning**: Don't forget too to set your AI LLM/Provider API Key before running `acp run` or the coding agent.
-> By example: `export ANTHROPIC_API_KEY=<your key>` (plus the base URL if your provider needs one). Never commit it.
+> **Warning**: Don't forget to set your AI LLM/Provider API Key before running `acp run` or the coding agent.
+> By example: `export ANTHROPIC_API_KEY=<your key>` (plus the base URL if your provider needs one).
 
 Create the different projects, install mcp, acp tools using this script
 
@@ -29,7 +26,12 @@ Create the different projects, install mcp, acp tools using this script
 
 ## Demo instructions
 
-**Important**: If, the migration fails using `Agent Coding & Quarkit`, look to the folder suffixed with `*-migrated` under: `$DEMO_DIR/quarkit` as it contains the application migrated. You can find the same too for `mtool` !
+**Important**: 
+
+If, the migration fails using `Agent Coding & Quarkit`, look to the folder suffixed with `*-migrated` under: `$DEMO_DIR/quarkit` as it contains the application migrated. You can find the same too for `mtool` !
+
+Set the environment variables in every `TERMINAL` tab required for the demo using the script:
+`<repo_cloned>/scripts/setenv.sh`
 
 ### Analyze and transform using mtool
 
@@ -66,16 +68,16 @@ mvn spring-boot:run
 | # | Command | Comment |
 |---|---------|-----|
 | 1 | `mtool --version` | Must display the version of the cli: 1.0.6. |
-| 2 | `less ./cookbook/rules/quarkus-spring/020-springboot-to-quarkus-rest-annotations.yaml` | A rule contains metadata, ID, `when/condition` which are queries like `java.annotation is '…'` parsed by ANTLR). The `instructions` belongs to different providers: `openrewrite`, `manual`, `ai` that the tool can use during the transformation/migration step |
-| 3 | `ls ./cookbook/rules/quarkus-spring` | Rules are grouped and ordered: BOM, dependencies, annotations, properties, tests. |
+| 2 | `less ./cookbook/rules/quarkus-spring/020-springboot-to-quarkus-rest-annotations.yaml` | A rule contains metadata, ID, `when/condition` which are queries like `java.annotation is '…'` parsed by ANTLR. The `instructions` are grouped by different providers: `openrewrite`, `manual`, `ai` that the tool can use during the transformation/migration step |
+| 3 | `ls ./cookbook/rules/quarkus-spring` | Rules are grouped by domain to be migrated and ordered: BOM, dependencies, annotations, properties, tests. |
 | 4 | `less ./cookbook/rules/quarkus-spring-precondition/010-springboot-replace-bom-quarkus.yaml` | A precondition rule allows to check if an application matches some criteria before to be migrated. |
-| 5 | `mtool analyze ./spring-boot-todo-app -r ./cookbook/rules/quarkus-spring-precondition` | Precondition check before any change. See the `ERROR` message |
+| 5 | `mtool analyze ./spring-boot-todo-app -r ./cookbook/rules/quarkus-spring-precondition` | Precondition checks before any change and is used at the beginning og a migration. See the `ERROR` message |
 
 - To analyze an application and generate the JSON report / migration plan, run the following commands:
 
-| 1 | `mtool analyze ./spring-boot-todo-app -r ./cookbook/rules/quarkus-spring --scanner openrewrite` | Each rule is matched against the code, with the file and line. Scanners: openrewrite (default), TreeSitter4J - https://github.com/roastedroot/treesitter4j, maven. |
-| 2 | `mtool analyze ./spring-boot-todo-app -r ./cookbook/rules/quarkus-spring -o html` | Same analysis generating an HTML report.  open the `analysing-openrewrite-report_*.html` file showed on the terminal next to the text: `HTML Report file exported to: file:///`. |
-| 3 | `ls ./spring-boot-todo-app/analysing-openrewrite-report_*.json` and `jq . ./spring-boot-todo-app/analysing-openrewrite-report_*.json | less` | The JSON report is the input of `transform` and contains the instructions to perform the migration. |
+| 1 | `mtool analyze ./spring-boot-todo-app -r ./cookbook/rules/quarkus-spring --scanner openrewrite` | Each rule is matched against the code using the different scanners: openrewrite (default), TreeSitter4J - https://github.com/roastedroot/treesitter4j, maven. End of the command execution an ascii report table is displayed. See the detail |
+| 2 | `mtool analyze ./spring-boot-todo-app -r ./cookbook/rules/quarkus-spring -o html` | Same analysis generating an HTML report. Open the `analysing-openrewrite-report_*.html` file name showed on the terminal next to : `HTML Report file exported to: file:///`. When opened in your browser, click on RuleId link to see the rule definition |
+| 3 | `ls ./spring-boot-todo-app/analysing-openrewrite-report_*.json` and `jq . ./spring-boot-todo-app/analysing-openrewrite-report_*.json | less` | The JSON report is the input aka migration plan used with `transform` command and contains the instructions to perform the migration. |
 
 - And finally migrate the spring boot application using as commands
 
@@ -95,7 +97,7 @@ mvn quarkus:dev
 
 > **WARNING**: As you will discover you cannot create Tasks using the UI as openrewrite don't provide recipes able to migrate Thymeleaf to Quarkus Qute except only replacing the dependency !
 
-- Uou can nevertheless do some curl requests to access the REST endpoints
+- You can nevertheless do some curl requests to access the REST endpoints
 ```bash
 # TERMINAL 2
 curl http://127.0.0.1:8080/home
@@ -115,7 +117,7 @@ curl http://127.0.0.1:8080/home
 
 ### Coding agent using skill and quarkit
 
-**Description** : By moving to an AI Coding Agent able to read the skill [instructions](./qi330-demo/quarkus-skills/skills/migrate-spring-to-quarkus) and accessing a MCP server, we will now migrate properly the Spring Boot Application including also the Web layer: Thymeleaf to [Quarkus Qute](https://quarkus.io/guides/qute/). During this demo you will use either the [Java acp CLI](https://github.com/smallrye/smallrye-acp-client) to install your favorite agent or [Claude code](https://claude.com/product/claude-code). We will also introduce some of the key concepts which have been adopted to organize the instructions, process the migration as in a workflow with gated steps and use references to tell to the agent what to migrate.
+**Description** : By moving to an AI Coding Agent able to read the skill [instructions]($SKILL_DIR/skills/migrate-spring-to-quarkus) and accessing an MCP server, we will now migrate properly the Spring Boot Application including also the Web layer: Thymeleaf to [Quarkus Qute](https://quarkus.io/guides/qute/). During this demo you will use either the [Java acp CLI](https://github.com/smallrye/smallrye-acp-client) to install your favorite agent or [Claude code](https://claude.com/product/claude-code). We will also introduce some of the key concepts which have been adopted to organize the instructions, process the migration as in a workflow with gated steps and use references to tell to the agent what to migrate.
 
 **Project** : `$DEMO_DIR/quarkit`
 
@@ -132,11 +134,11 @@ project goes to the sibling **`$DEMO_DIR/quarkit/spring-boot-todo-app-quarkus/`*
 
 | # | Command | Comment |
 |---|---------|-----|
-| 1 | `tree ./qi330-demo/quarkus-skills/skills/migrate-spring-to-quarkus` | Explore the structure of the folders under the skill. It contains different modules executed in a specific order: prerequisite, planning, build, etc. The references map between the 2 frameworks what should be changed. |
-| 2 | `less +'/### Decision Gate Table' ./qi330-demo/quarkus-skills/skills/migrate-spring-to-quarkus/SKILL.md` | The decision gate table details the different modules to be evaluated, what to check and the expected result. If it fails, then the coding agent will exit, otherwise it continues. |
-| 3 | `cat ./qi330-demo/quarkus-skills/skills/migrate-spring-to-quarkus/modules/prerequisite/prerequisite.md | Read the `prerequisite.md` to see how we verify the prerequisites  |
-| 4 | `cat ./qi330-demo/quarkus-skills/skills/migrate-spring-to-quarkus/modules/planning/plannning.md | The `planning.md` file is a central point of the architecture as it will capture under the generated file: `migration-spec.yaml` different metadata used by the modules to migrate the application.  |
-| 3 | `cat ./qi330-demo/quarkit/spring-boot-todo-app/.quarkus-migration.yml` | The skill can use the information of the file `.quarkus-migration.yml` (when created) within the module: planning and prerequisite to execute the instructions according to the user's choices when running in autonmous mode. |
+| 1 | `tree $SKILL_DIR/skills/migrate-spring-to-quarkus` | Explore the structure of the folders under the skill. It contains different modules executed in a specific order: prerequisite, planning, build, etc. The references map between the 2 frameworks what should be changed. |
+| 2 | `less +'/### Decision Gate Table' $SKILL_DIR/skills/migrate-spring-to-quarkus/SKILL.md` | The decision gate table details the different modules to be evaluated, what to check and the expected result. If it fails, then the coding agent will exit, otherwise it continues. |
+| 3 | `less $SKILL_DIR/skills/migrate-spring-to-quarkus/modules/prerequisite/prerequisite.md` | Read the `prerequisite.md` to see how we verify the prerequisites  |
+| 4 | `less $SKILL_DIR/skills/migrate-spring-to-quarkus/modules/planning/planning.md` | The `planning.md` file is a central point of the architecture as it will capture under the generated file: `migration-spec.yaml` different metadata used by the modules to migrate the application.  |
+| 3 | `cat $DEMO_DIR/quarkit/spring-boot-todo-app/.quarkus-migration.yml` | The skill can use the information of the file `.quarkus-migration.yml` (when created) within the module: planning and prerequisite to execute the instructions according to the user's choices when running in autonmous mode. |
 
 - When you have finished to review the skill folders, files, launch the Quarkit MCP server
 ```bash
@@ -157,7 +159,7 @@ MCP server 'quarkit-http' is ready at http://localhost:8080/mcp (http) - press C
 ```
 **Note**: Verify that the Quarkus Server has been well started and has loaded the reference files
 
-- Next, select one of the two `options` described hereafter to perform the IA migration:
+- Next, select one of the two `options` described hereafter to perform the AI migration:
 
 **Option 1**: Use the Smallrye Java ACP client
 
@@ -185,16 +187,20 @@ claude --mcp-config '{"mcpServers":{"mtools":{"type":"http","url":"http://localh
 while still stopping risky actions. `acceptEdits` only covers file edits, so every Bash command
 would ask for approval on screen.
 
+- Check the messages displayed within the terminal like `check`, `compile`, `validation` where the Quarkit MCP server is called
+```
+Prerequisites passed (JDK 21, Maven 3.9.4 via wrapper, Podman available). Now reading the remaining skill modules before planning the migration.
+Planning: setting up the target directory, checking the Quarkus version and the code.quarkus.io streams.
+JDK check passes (3.40 stream needs ≥17; JDK 21 is installed). Copying the source into the target and writing the spec.
+Build module (Gate PASS: Spring Boot parent, starters and plugin present). Rewriting `pom.xml`:
+Compile passes. Now running the persistence validation via the quarkit MCP tool, as the skill requires:
+Persistence validation: 8/8 PASS. Messaging module: **SKIPPED** (no Kafka/Rabbit/JMS usage). Now the testing module (Gate PASS: `@SpringBootTest` found):
+```
+
 - When the agent code has finished to perform the migration, do a quick check to verify the migration
 
-| 1 | `less ./qi330-demo/quarkit/spring-boot-todo-app-quarkus/pom.xml` | Review the quarkus dependencies and version of the Quarkus BOM. |
-| 2 | `less ./qi330-demo/quarkit/spring-boot-todo-app-quarkus/migration-summary.md` | The `Overall Status` must be `100% Complete`. |
-
-
-**Reset to run it again:**
-```bash
-rm -rf $DEMO_DIR/spring-boot-todo-app-quarkus $DEMO_DIR/spring-boot-todo-app/migration-metadata
-```
+| 1 | `less $DEMO_DIR/quarkit/spring-boot-todo-app-quarkus/pom.xml` | Review the quarkus dependencies and version of the Quarkus BOM. |
+| 2 | `less $DEMO_DIR/quarkit/spring-boot-todo-app-quarkus/migration-summary.md` | The `Overall Status` must be `100% Complete`. |
 
 ---
 
@@ -208,9 +214,9 @@ rm -rf $DEMO_DIR/spring-boot-todo-app-quarkus $DEMO_DIR/spring-boot-todo-app/mig
 
 | # | Command | Say |
 |---|---------|-----|
-| 1 | `less ./qi330-demo/quarkit/spring-boot-todo-app-quarkus/migration-summary.md` | The summary tells you what migrated, what didn't, and why: every applicable module done, messaging skipped, 6/6 verification checks, and the remaining work (point `%prod` at the real MySQL, the unused `jjwt` dependency). |
-| 2 | `ls ./qi330-demo/quarkit/spring-boot-todo-app-quarkus/migration-reports/` | The JSON reports generated during the `project-setup` and validation steps: `quarkit-validation-report.json` and `reporting-report.json`. |
-| 3 | `(cd ./qi330-demo/quarkit/spring-boot-todo-app-quarkus && ./mvnw clean test)` | 4 Junit tests executed successfully and MySQL started by Dev Services: see messages reported by the logger: `org.testcontainers` and `tc.docker.io/library/mysql:9.5`. |
+| 1 | `less $DEMO_DIR/quarkit/spring-boot-todo-app-quarkus/migration-summary.md` | The summary tells you what migrated, what didn't, and why: every applicable module done, messaging skipped, 6/6 verification checks, and the remaining work (point `%prod` at the real MySQL, the unused `jjwt` dependency). |
+| 2 | `ls $DEMO_DIR/quarkit/spring-boot-todo-app-quarkus/migration-reports/` | The JSON reports generated during the `project-setup` and validation steps: `quarkit-validation-report.json` and `reporting-report.json`. |
+| 3 | `(cd $DEMO_DIR/quarkit/spring-boot-todo-app-quarkus && ./mvnw clean test)` | 4 Junit tests executed successfully and MySQL started by Dev Services: see messages reported by the logger: `org.testcontainers` and `tc.docker.io/library/mysql:9.5`. |
 | 4 | `./mvnw quarkus:dev -Dquarkus.http.port=8090` | Open http://localhost:8090: list, add and delete tasks, pagination. |
 | 5 | Compare what changed within the file `templates/TaskResource/home.html` next to the original Thymeleaf `templates/home.html` | Type-safe Qute templates (`@CheckedTemplate`), checked at build time. |
 
@@ -220,7 +226,7 @@ rm -rf $DEMO_DIR/spring-boot-todo-app-quarkus $DEMO_DIR/spring-boot-todo-app/mig
 
 ### Quarkit MCP server with acp
 
-**Description** : Use the commands of the Smallrye ACP CLI - https://github.com/smallrye/smallrye-acp-client installed to install an agent or use a mcp server, to list the tools and query a tool. 
+**Description** : Use the commands of the Smallrye acp CLI - https://github.com/smallrye/smallrye-acp-client installed to register an acp agent or use a mcp server, to list the tools and query a tool. 
 
 **Project** : `$DEMO_DIR/quarkit`
 
@@ -245,9 +251,9 @@ acp run -a claude-acp -p "Say hello in French, Spanish"
 acp mcp list
 ```
 
-- Now that you masterize the acp CLI yoou can query the Quarkit MCP Tools as showed hereafter from the `TERMINAL 2`:
+- Now that you're mastering the acp CLI, you can query the Quarkit MCP Tools as showed hereafter from the `TERMINAL 2`:
 
-**Note**: The Quarkis MCP server (http transport) must still run under the `TERMINAL 1` !
+**Note**: The Quarkit MCP server (http transport) must still run under the `TERMINAL 1` !
 
 | # | Command | Comment |
 |---|---------|-----|
@@ -283,7 +289,7 @@ right above. Tests don't catch it; the validator does.
 | # | Command | Comment |
 |---|---------|-----|
 | 1 | `acp mcp call quarkit-http quarkit_validate -p target=$DEMO_DIR/quarkit/spring-boot-todo-app-quarkus -p source=$DEMO_DIR/quarkit/spring-boot-todo-app -p validator=persistence -p skipCompile=true` | The status is `PASS` and Rules reports: `8 total | 8 passed | 0 failed | 0 warnings`. |
-| 2 | `vim $DEMO_DIR/quarkit/spring-boot-todo-app-quarkus/src/main/java/com/todo/app/entity/Task.java`. Rename `extends PanacheEntity` with `extends PanacheEntityBase`. Add or change the `@GeneratedValue(strategy = GenerationType.AUTO)` to `@GenerationType.IDENTITY)`. |
+| 2 | `vim $DEMO_DIR/quarkit/spring-boot-todo-app-quarkus/src/main/java/com/todo/app/entity/Task.java`. Change the strategy to generate the key:  `@GeneratedValue(strategy = GenerationType.AUTO)` to `@GenerationType.IDENTITY)`. |
 | 3 | Same command as #1 | One FAIL: `ID generation strategy matches` → `ID strategy changed: AUTO -> IDENTITY`. |
 
 ---

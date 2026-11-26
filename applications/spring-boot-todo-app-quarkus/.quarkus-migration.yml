@@ -1,2 +1,4 @@
 strategy: full-quarkus
 mode: non-interactive
+quarkus_version: 3.40.1.1
+java_version: 21
