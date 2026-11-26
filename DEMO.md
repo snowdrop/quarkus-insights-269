@@ -31,11 +31,11 @@ Create the different projects, install mcp, acp tools using this script
 
 ### Analyze and transform using mtool
 
-Description: During this demo you will use the `mtool` CLI to analyze an application to be migrated, generate a migration plan (= JSON report file) based on rules conditions evaluated against the application and execute the migration using openrewrite recipes defined as instructions part of the rules
+**Description** : During this demo you will use the `mtool` CLI to analyze an application to be migrated, generate a migration plan (= JSON report file) based on rules conditions evaluated against the application and execute the migration using openrewrite recipes defined as instructions part of the rules
 
-Project: `$DEMO_DIR/mtool`
+**Project** : `$DEMO_DIR/mtool`
 
-Instructions
+**Instructions**
 
 - Before to analyze the application, verify that it works
 ```bash
@@ -90,7 +90,8 @@ cd spring-boot-todo-app
 mvn quarkus:dev
 ```
 - Open the quarkus application in your browser, create tasks, etc: `http://localhost:8080`
-> **WARNING**: As you will discover you cannot create Tasks as openrewrite don't provide recipes able to migrate Thymeleaf to Quarkus Qute except to replace the dependency !!
+
+> **WARNING**: As you will discover you cannot create Tasks using the UI as openrewrite don't provide recipes able to migrate Thymeleaf to Quarkus Qute except only replacing the dependency !
 
 - Uou can nevertheless do some curl requests to access the REST endpoints
 ```bash
@@ -102,54 +103,65 @@ curl -X POST http://localhost:8080/home \
 curl -X POST http://localhost:8080/home \
   -H "Content-Type: application/json" \
   -d '{"title": "Prepare migration to Quarkus. Task 2", "description": "Migrating Spring Boot TO DO to Quarkus. Task 2", "dueDate": "2025-12-24"}'
+  
+# Curl again the home endpoint to see the tasks stored
+curl http://127.0.0.1:8080/home
 ```
+- You can now stop the `quarkus` application before to move to the next demo !
+
 ---
 
-## TODO: the agent calling quarkit (Aurea)
+### Coding agent using skill and quarkit
 
-Project: `$DEMO_DIR/spring-boot-todo-app` (the Spring todo app; `scripts/setup.sh` installed the skill in
-`.claude/skills/` and wrote `.quarkus-migration.yml` with `strategy: full-quarkus`).
+**Description** : By moving to an AI Coding Agent able to read the skill [instructions](./qi330-demo/quarkus-skills/skills/migrate-spring-to-quarkus) and accessing a MCP server, we will now migrate properly the Spring Boot Application including also the Web layer: Thymeleaf to [Quarkus Qute](https://quarkus.io/guides/qute/). During this demo you will use either the [Java acp CLI](https://github.com/smallrye/smallrye-acp-client) to install your favorite agent or [Claude code](https://claude.com/product/claude-code). We will also introduce some of the key concepts which have been adopted to organize the instructions, process the migration as in a workflow with gated steps and use references to tell to the agent what to migrate.
 
-The skill never modifies its source: `spring-boot-todo-app-live/` is only read (the skill may write
+**Project** : `$DEMO_DIR/quarkit`
+
+**Instructions**
+
+The skill never modifies its source: `$DEMO_DIR/quarkit/spring-boot-todo-app/` is only read (the skill may write
 extraction data to `migration-metadata/` there; in our runs it went to the target) and the migrated
-project goes to the sibling **`$DEMO_DIR/spring-boot-todo-app-quarkus/`** (default target
-`<source-name>-quarkus/`, see `modules/planning/planning.md`). The `-live` suffix keeps it apart
-from `spring-boot-todo-app-quarkus/`, the pre-migrated app of blocks c and e.
+project goes to the sibling **`$DEMO_DIR/quarkit/spring-boot-todo-app-quarkus/`** (default target
+`<source-name>-quarkus/`, see `modules/planning/planning.md`).
 
-The rehearsal run took **about 5 minutes** (2026-11-20). Proposal: kick it off at the start of the
-"Anatomy of the skill" segment and come back to it when the persistence module has run and
-the `quarkit_validate` call is visible.
+> **Note**: Before to start the migration using AI, please unsure that you set properly the environment variables to access your LLM provider: anthropic, google vertex, azure, etc
 
-### Option 1: Claude Code with `--mcp-config`
+- To discover some of the key features of the skill, execute the following commands:
 
-**Terminal tab: agent**
+| # | Command | Comment |
+|---|---------|-----|
+| 1 | `tree ./qi330-demo/quarkus-skills/skills/migrate-spring-to-quarkus` | Explore the structure of the folders under the skill. It contains different modules executed in a specific order: prerequisite, planning, build, etc. The references map between the 2 frameworks what should be changed. |
+| 2 | `less +'/### Decision Gate Table' ./qi330-demo/quarkus-skills/skills/migrate-spring-to-quarkus/SKILL.md` | The decision gate table details the different modules to be evaluated, what to check and the expected result. If it fails, then the coding agent will exit, otherwise it continues. |
+| 3 | `cat ./qi330-demo/quarkus-skills/skills/migrate-spring-to-quarkus/modules/prerequisite/prerequisite.md | Read the `prerequisite.md` to see how we verify the prerequisites  |
+| 4 | `cat ./qi330-demo/quarkus-skills/skills/migrate-spring-to-quarkus/modules/planning/plannning.md | The `planning.md` file is a central point of the architecture as it will capture under the generated file: `migration-spec.yaml` different metadata used by the modules to migrate the application.  |
+| 3 | `cat ./qi330-demo/quarkit/spring-boot-todo-app/.quarkus-migration.yml` | The skill can use the information of the file `.quarkus-migration.yml` (when created) within the module: planning and prerequisite to execute the instructions according to the user's choices when running in autonmous mode. |
 
+- When you have finished to review the skill folders, files, launch the Quarkit MCP server
 ```bash
-cd $DEMO_DIR/spring-boot-todo-app
-claude --mcp-config ../mcp-config.json --permission-mode auto \
-  "Migrate this Spring Boot project to Quarkus"
+# TERMINAL 1
+cd $DEMO_DIR/quarkit
+
+acp mcp add -f -t http quarkit-http http://localhost:8080/mcp -- \
+  jbang --deps dev.snowdrop.mtool:references:2.0.3 mcp-http@snowdrop/quarkit
+
+acp mcp serve -e QUARKIT_ALLOWED_DIRS=$QUARKIT_ALLOWED_DIRS quarkit-http
+...
+2026-11-26 10:55:39,377 INFO  [dev.snowdrop.mtool.mcp.ReferenceRepository] (main) Loaded reference file: annotation-map.json (99 records)
+2026-11-26 10:55:39,379 INFO  [dev.snowdrop.mtool.mcp.ReferenceRepository] (main) Loaded reference file: config-map.json (54 records)
+2026-11-26 10:55:39,380 INFO  [dev.snowdrop.mtool.mcp.ReferenceRepository] (main) Loaded reference file: dependency-map.json (37 records)
+2026-11-26 10:55:39,436 INFO  [io.quarkiverse.mcp.server] (executor-thread-1) MCP HTTP transport endpoints [streamable: http://0.0.0.0:8080/mcp, SSE: http://0.0.0.0:8080/mcp/sse]
+
+MCP server 'quarkit-http' is ready at http://localhost:8080/mcp (http) - press Ctrl-C to stop it
 ```
+**Note**: Verify that the Quarkus Server has been well started and has loaded the reference files
 
-`--permission-mode auto` lets the agent run its `./mvnw`, `java` and file commands without asking,
-while still stopping risky actions. `acceptEdits` only covers file edits, so every Bash command
-would ask for approval on screen.
+- Next, select one of the two `options` described hereafter to perform the IA migration:
 
-`scripts/mcp-config.json` points the agent at the server already running in the **mcp** tab
-(`http://localhost:8080/mcp`), under the name `mtools` that the skill expects.
-
-| # | Say |
-|---|-----|
-| 1 | One prompt. The skill brings the plan; the strategy comes from `.quarkus-migration.yml`. |
-| 2 | Point out `/mcp` (or the startup line): the `mtools` server is connected. |
-| 3 | While it runs: open `SKILL.md`, the gate table, the modules loaded on demand, `compile-fix.md`, `references/mtools-mcp.md`. |
-| 4 | When persistence is done: find the `quarkit_validate` call in the agent output (`Called mtools`). |
-
-> If the `migrate-spring-to-quarkus` skill is also installed globally (`~/.claude/skills`), that copy
-> wins over the project one: check with `/skills` that only one shows up.
-
-### Option 2: ACP client
+**Option 1**: Use the Smallrye Java ACP client
 
 ```bash
+# TERMINAL 2
+cd $DEMO_DIR/quarkit
 acp run -a claude-acp --backup no \
   --wks $DEMO_DIR/quarkit/spring-boot-todo-app \
   -s $SKILL_DIR/quarkus-skills/skills \
@@ -157,9 +169,25 @@ acp run -a claude-acp --backup no \
   -p "Migrate this Spring Boot project to Quarkus"
 ```
 
-> ⚠️ Not rehearsed. Flags from `acp run --help` at the time of mtool 2.0.3, and the
-> `--mcp-server-config` still uses the old 2.0.3 stdio runner. With the server now registered in acp
-> as `quarkit-http`, check with Charles whether `acp run` can reuse it.
+- **Option 2** : Use Claude Code 
+
+```bash
+# TERMINAL 2
+cd $DEMO_DIR/quarkit
+claude --mcp-config '{"mcpServers":{"mtools":{"type":"http","url":"http://localhost:8080/mcp"}}}' \
+  --permission-mode auto \
+  "Migrate this Spring Boot project to Quarkus"
+```
+
+> **Note**: `--permission-mode auto` lets the agent run its `./mvnw`, `java` and file commands without asking,
+while still stopping risky actions. `acceptEdits` only covers file edits, so every Bash command
+would ask for approval on screen.
+
+- When the agent code has finished to perform the migration, do a quick check to verify the migration
+
+| 1 | `less ./qi330-demo/quarkit/spring-boot-todo-app-quarkus/pom.xml` | Review the quarkus dependencies and version of the Quarkus BOM. |
+| 2 | `less ./qi330-demo/quarkit/spring-boot-todo-app-quarkus/migration-summary.md` | The `Overall Status` must be `100% Complete`. |
+
 
 **Reset to run it again:**
 ```bash
@@ -168,61 +196,65 @@ rm -rf $DEMO_DIR/spring-boot-todo-app-quarkus $DEMO_DIR/spring-boot-todo-app/mig
 
 ---
 
-## e — The todo app on Quarkus (Aurea)
+## The Quarkus Todo application and migration summary
 
-Project: `$DEMO_DIR/spring-boot-todo-app-quarkus` (Spring Boot 3.5.3 → Quarkus 3.40.1.2, full-quarkus),
-copied by `scripts/setup.sh` from [fallback/spring-boot-todo-app-quarkus](fallback/spring-boot-todo-app-quarkus/).
+**Description** : We will now analyze the migration summary and validate if we can start the Quarkus application and create tasks using the UI.
 
-It is the agent's output as-is. The only change after the migration is demo seed data
-(`import.sql`, loaded in dev mode only), so the app doesn't start empty.
+**Project** : `$DEMO_DIR/quarkit`
 
-**Terminal tab: quarkit** (`cd $DEMO_DIR`)
+**Instructions**
 
 | # | Command | Say |
 |---|---------|-----|
-| 1 | `less spring-boot-todo-app-quarkus/migration-summary.md` | The summary tells you what migrated, what didn't, and why: every applicable module done, messaging skipped, 6/6 verification checks, and the remaining work (point `%prod` at the real MySQL, the unused `jjwt` dependency). |
-| 2 | `ls spring-boot-todo-app-quarkus/migration-reports/` | The JSON reports: validation (mtools project-setup and persistence) and reporting. |
-| 3 | `(cd spring-boot-todo-app-quarkus && ./mvnw clean test)` | 3 `@QuarkusTest` tests, MySQL started by Dev Services. |
-| 4 | `(cd spring-boot-todo-app-quarkus && ./mvnw quarkus:dev -Dquarkus.http.port=8090)` | Open http://localhost:8080: list, add and delete tasks, pagination. |
-| 5 | Show `templates/TaskResource/home.html` next to the original Thymeleaf `templates/home.html` | Type-safe Qute templates (`@CheckedTemplate`), checked at build time. |
+| 1 | `less ./qi330-demo/quarkit/spring-boot-todo-app-quarkus/migration-summary.md` | The summary tells you what migrated, what didn't, and why: every applicable module done, messaging skipped, 6/6 verification checks, and the remaining work (point `%prod` at the real MySQL, the unused `jjwt` dependency). |
+| 2 | `ls ./qi330-demo/quarkit/spring-boot-todo-app-quarkus/migration-reports/` | The JSON reports generated during the `project-setup` and validation steps: `quarkit-validation-report.json` and `reporting-report.json`. |
+| 3 | `(cd ./qi330-demo/quarkit/spring-boot-todo-app-quarkus && ./mvnw clean test)` | 4 Junit tests executed successfully and MySQL started by Dev Services: see messages reported by the logger: `org.testcontainers` and `tc.docker.io/library/mysql:9.5`. |
+| 4 | `./mvnw quarkus:dev -Dquarkus.http.port=8090` | Open http://localhost:8090: list, add and delete tasks, pagination. |
+| 5 | Compare what changed within the file `templates/TaskResource/home.html` next to the original Thymeleaf `templates/home.html` | Type-safe Qute templates (`@CheckedTemplate`), checked at build time. |
 
-`-Dquarkus.http.port=8090` because the MCP server holds 8080 (the app's own port is 8081).
-
-**Key point:** about 5 minutes, one prompt, validated at each gate. Not a magic button: the summary
-lists the remaining work.
-
-**Plan B:** the same project in this repo, [fallback/spring-boot-todo-app-quarkus](fallback/spring-boot-todo-app-quarkus/),
-and the session log [fallback/agent-log.md](fallback/agent-log.md).
+**Note**: We set the property `-Dquarkus.http.port=8090` because the MCP server holds 8080.
 
 ---
 
-## b — quarkit MCP server with acp (Charles)
+## Quarkit MCP server with acp
 
-The server runs in the **mcp** tab, registered in acp as `quarkit-http`. `acp mcp` speaks the same
-stateless MCP protocol (2026-07-28) the agent uses; add `-v` to any command to show the JSON-RPC
-request and response.
+**Description** : Use the commands of the Smallrye ACP CLI - https://github.com/smallrye/smallrye-acp-client installed to install an agent or use a mcp server, to list the tools and query a tool. 
 
-**Terminal tab: quarkit** (`cd $DEMO_DIR`), ACP basics first:
+**Project** : `$DEMO_DIR/quarkit`
+
+**Instructions**:
+
+- Execute the commands defined hereafter to familiarize yourself with different commands:
 
 ```bash
-acp registry list            # installed agents
-acp registry list -r         # remote ACP registry
-acp registry install bob --force
-acp run -a claude-acp -p "Say hello in French, Spanish"   # needs the AI API key
+# Your installed agents
+acp registry list
+
+# List of remote ACP registry
+acp registry list -r
+
+# To (re-)install a new ACP coding agent
+acp registry install claude-acp --force 
+
+# Execute a prompt message
+acp run -a claude-acp -p "Say hello in French, Spanish"
+
+# List the mcp server(s) registered
+acp mcp list
 ```
 
-Project: https://github.com/smallrye/smallrye-acp-client
+- Now that you masterize the acp CLI yoou can query the Quarkit MCP Tools as showed hereafter from the `TERMINAL 2`:
 
-**Terminal tab: quarkit** (`cd $DEMO_DIR`)
+**Note**: The Quarkis MCP server (http transport) must still run under the `TERMINAL 1` !
 
-| # | Command | Say |
+| # | Command | Comment |
 |---|---------|-----|
-| 1 | `acp mcp tools quarkit-http` | Four tools: analyze, validate, references list and lookup. This is what the agent sees. `--schema` adds their parameters. |
-| 2 | `acp mcp call quarkit-http quarkit_analyze -p "query=pom dependency all" -p project_path=$DEMO_DIR/quarkit/spring-boot-todo-app` | Deterministic inventory of the Spring app. No LLM involved. |
-| 3 | `acp mcp call quarkit-http quarkit_analyze -p "query=java annotation all" -p project_path=$DEMO_DIR/quarkit/spring-boot-todo-app` | Every annotation, per file: `@Controller`, `@Service`, `@Entity`… The app is small, so the list fits on screen. |
-| 4 | `acp mcp call quarkit-http quarkit_references_list` | Three maps: annotation, config, dependency, with their sections. |
-| 5 | `acp mcp call quarkit-http quarkit_reference_lookup -p map=annotation -p key=@Transactional -p mode=compat` | The agent looks up the mapping instead of guessing it. |
-| 6 | `acp mcp call quarkit-http quarkit_reference_lookup '{"map":"annotation","key":"@Transactional","mode":"compat"}'` | Same lookup with a JSON argument instead of `-p`. |
+| 1 | `acp mcp tools quarkit-http` | Four tools: `quarkit_analyze`, `quarkit_validate`, `quarkit_references_list` and `quarkit_lookup` are listed. This is what the agent sees. If you pass the parameter: `--schema` then you will see the tool's parameters. |
+| 2 | `acp mcp call quarkit-http quarkit_analyze -p "query=pom dependency all" -p project_path=$DEMO_DIR/quarkit/spring-boot-todo-app` | The tool analyze allows to parse an application using a ANTLR query. Verify that you got 8 matches as pom dependencies. |
+| 3 | `acp mcp call quarkit-http quarkit_analyze -p "query=java annotation all" -p project_path=$DEMO_DIR/quarkit/spring-boot-todo-app` | We run a new query to search/find all the annotations within the Java classes. The parser used under the hood is TreeSitter4j- https://github.com/roastedroot/treesitter4j. |
+| 4 | `acp mcp call quarkit-http quarkit_references_list` | List the references: annotation, config, dependency and their sections/domains. Such data are loaded y the Quarkit MCP server at launch ! |
+| 5 | `acp mcp call quarkit-http quarkit_reference_lookup -p map=annotation -p key=@Transactional -p mode=compat` | Look up to search the mapping between Spring and Quarkus using compatibility mode. You should see: `spring" : "@Transactional"` and "quarkus" : "jakarta.transaction.Transactional". |
+| 6 | `acp mcp call quarkit-http quarkit_reference_lookup '{"map":"annotation","key":"@Transactional","mode":"compat"}'` | Same lookup using a JSON argument instead of the parameters. |
 
 Other lookups that read well live:
 ```bash
@@ -230,17 +262,15 @@ acp mcp call quarkit-http quarkit_reference_lookup -p map=annotation -p "section
 acp mcp call quarkit-http quarkit_reference_lookup -p map=config -p key=spring.datasource.url
 ```
 
-Tool and parameter names checked in the quarkit `2.0.3` source (`AnalyzeTools`, `ReferenceTools`),
-`-p name=value` in `acp mcp call --help`. ⚠️ Not run yet: rehearse them.
-
-**Plan B:** `-v` on the same commands, or the server's log in the **mcp** tab.
-
 ---
 
-## c — Break a migrated entity (Charles)
+## Break a migrated Java JPA entity
 
-Project: `$DEMO_DIR/spring-boot-todo-app-quarkus` (already migrated), compared with
-`$DEMO_DIR/spring-boot-todo-app` (the Spring original).
+**Description** : During the following demo, you will modify within the migrated application a Java class (Task.java class by example) to re-run the MCP Tool validation and observe what it happened when a check condition is not correct.
+
+**Project**: `$DEMO_DIR/quarkit/spring-boot-todo-app-quarkus`
+
+**Instructions**: 
 
 The break: `Task.id` goes from `GenerationType.AUTO` to `GenerationType.IDENTITY`, the kind of
 "simplification" an agent makes for MySQL. It compiles and the tests should still pass (Dev
@@ -248,49 +278,10 @@ Services creates a fresh schema), but it no longer matches the existing database
 `AUTO`, which on MySQL means a sequence table, and the migrated code even says so in the comment
 right above. Tests don't catch it; the validator does.
 
-**Terminal tab: quarkit** (`cd $DEMO_DIR`)
-
-| # | Command | Say |
+| # | Command | Comment |
 |---|---------|-----|
-| 1 | `acp mcp call quarkit-http quarkit_validate -p target=$DEMO_DIR/quarkit/spring-boot-todo-app-quarkus -p source=$DEMO_DIR/quarkit/spring-boot-todo-app -p validator=persistence -p skipCompile=true` | Baseline: all PASS. Entities, tables, fields, ID strategy compared with the Spring source. |
-| 2 | `cd spring-boot-todo-app-quarkus && sed -i '' 's/GenerationType\.AUTO/GenerationType.IDENTITY/g' src/main/java/com/todo/app/entity/Task.java )` | Show the one-line diff in the editor. Or edit `Task.java` with `vim` (as in cmds.md): `GenerationType.AUTO` → `GenerationType.IDENTITY`. |
-| 3 | (optional, if time) `(cd spring-boot-todo-app-quarkus && ./mvnw -q compile)` | It compiles. |
-| 4 | Same command as #1 | One FAIL: `ID generation strategy matches` → `ID strategy changed: AUTO -> IDENTITY`. |
-| 5 | `(cd spring-boot-todo-app-quarkus && git apply -R ../break-entity.patch)` | Back to green. |
+| 1 | `acp mcp call quarkit-http quarkit_validate -p target=$DEMO_DIR/quarkit/spring-boot-todo-app-quarkus -p source=$DEMO_DIR/quarkit/spring-boot-todo-app -p validator=persistence -p skipCompile=true` | The status is `PASS` and Rules reports: `8 total | 8 passed | 0 failed | 0 warnings`. |
+| 2 | `vim $DEMO_DIR/quarkit/spring-boot-todo-app-quarkus/src/main/java/com/todo/app/entity/Task.java` and add or change the `@GeneratedValue(strategy = GenerationType.AUTO)` to `@GenerationType.IDENTITY)`. |
+| 3 | Same command as #1 | One FAIL: `ID generation strategy matches` → `ID strategy changed: AUTO -> IDENTITY`. |
 
-`skipCompile=true` keeps the call at a few seconds; without it the validator runs `mvn compile` too.
-`spring-boot-todo-app-quarkus/` is not a git repo, but `git apply` also works on plain folders.
-
-> ⚠️ To rehearse. The patch applies and reverts cleanly (checked on a copy). The expected FAIL comes
-> from the validator source (`PersistenceValidator`, "ID generation strategy matches"); the baseline,
-> the FAIL and the tests after the break have not been run yet.
-
-**Key point:** the agent writes the code, the deterministic tool checks it. Green tests are not the
-same as a correct migration.
-
-**Plan B:** to capture after the rehearsal: the baseline and the FAIL output, in [fallback/](fallback/).
-
-# Plan B outputs
-
-Saved outputs to show if a live command fails.
-
-| File | Block | What it is |
-|------|-------|------------|
-| [todo-app-rewrite.patch](scripts/todo-app-rewrite.patch) | a | `mtool transform . -p openrewrite --dry-run` on `spring-boot-todo-app` (`target/rewrite/rewrite.patch`), mtool 2.0.2, 2026-11-16 |
-| [spring-boot-todo-app-quarkus/](spring-boot-todo-app-quarkus/) | c, d, e | Full agent migration of `spring-boot-todo-app` (2026-11-20, ~5 min, skill from quarkusio/skills `4e7fa56`). Agent output as-is, plus demo seed data (`import.sql` and `%dev` drop-and-create). Includes `migration-summary.md`, `migration-reports/` and `migration-metadata/`; `target/` excluded. `scripts/setup.sh` copies it to `qi330-demo/` for blocks c and e |
-| [agent-log.md](agent-log.md) | d | The Claude Code session of that run (`/export`). The `mtools` persistence validation is at line ~357 (8/8 PASS) |
-
-TODO before the episode:
-- [ ] the `mtool analyze` JSON report for the todo app (regenerate on the demo machine, it contains absolute paths)
-- [x] the agent session log showing the `quarkit_validate` call (block d): [agent-log.md](agent-log.md). Tool calls are collapsed in the export (`Called mtools`), the result is in the agent's text
-- [ ] block c: the `quarkit_validate persistence` output before and after `scripts/break-entity.patch`
-
-## Running the todo app backup
-
-The app uses MySQL through Dev Services, so Podman or Docker must be running. Use port 8090, because
-the MCP server holds 8080:
-
-```bash
-cd demo/fallback/spring-boot-todo-app-quarkus
-./mvnw quarkus:dev -Dquarkus.http.port=8090
-```
+---
