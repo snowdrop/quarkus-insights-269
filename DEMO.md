@@ -281,7 +281,7 @@ right above. Tests don't catch it; the validator does.
 | # | Command | Comment |
 |---|---------|-----|
 | 1 | `acp mcp call quarkit-http quarkit_validate -p target=$DEMO_DIR/quarkit/spring-boot-todo-app-quarkus -p source=$DEMO_DIR/quarkit/spring-boot-todo-app -p validator=persistence -p skipCompile=true` | The status is `PASS` and Rules reports: `8 total | 8 passed | 0 failed | 0 warnings`. |
-| 2 | `vim $DEMO_DIR/quarkit/spring-boot-todo-app-quarkus/src/main/java/com/todo/app/entity/Task.java` and add or change the `@GeneratedValue(strategy = GenerationType.AUTO)` to `@GenerationType.IDENTITY)`. |
+| 2 | `vim $DEMO_DIR/quarkit/spring-boot-todo-app-quarkus/src/main/java/com/todo/app/entity/Task.java`. Rename `extends PanacheEntity` with `extends PanacheEntityBase`. Add or change the `@GeneratedValue(strategy = GenerationType.AUTO)` to `@GenerationType.IDENTITY)`. |
 | 3 | Same command as #1 | One FAIL: `ID generation strategy matches` → `ID strategy changed: AUTO -> IDENTITY`. |
 
 ---
