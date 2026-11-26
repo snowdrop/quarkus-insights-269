@@ -173,7 +173,7 @@ acp run -a claude-acp --backup no \
 
 ```bash
 # TERMINAL 2
-cd $DEMO_DIR/quarkit
+cd $DEMO_DIR/quarkit/spring-boot-todo-app
 claude --mcp-config '{"mcpServers":{"mtools":{"type":"http","url":"http://localhost:8080/mcp"}}}' \
   --permission-mode auto \
   "Migrate this Spring Boot project to Quarkus"
