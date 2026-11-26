@@ -15,7 +15,14 @@ echo "Insight dir: $INSIGHTS_DIR"
 echo "Demo dir: $DEMO_DIR"
 
 # Start from a clean state: remove every folder under qi330-demo (files such as .gitkeep are kept)
-if [ -d "$DEMO_DIR" ]; then
+if [ -d "$DEMO_DIR" ] && [ -n "$(find "$DEMO_DIR" -mindepth 1 -maxdepth 1 -type d)" ]; then
+  echo "WARNING: the following folders under $DEMO_DIR will be DELETED:"
+  find "$DEMO_DIR" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sed 's/^/  - /'
+  read -r -p "Continue? [y/N] " answer || answer=n
+  case "$answer" in
+    [yY]|[yY][eE][sS]) ;;
+    *) echo "Aborted, nothing was deleted."; exit 1 ;;
+  esac
   echo "Cleaning $DEMO_DIR ..."
   find "$DEMO_DIR" -mindepth 1 -maxdepth 1 -type d -exec rm -rf {} +
 fi
