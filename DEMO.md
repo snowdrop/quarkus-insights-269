@@ -164,7 +164,7 @@ MCP server 'quarkit-http' is ready at http://localhost:8080/mcp (http) - press C
 cd $DEMO_DIR/quarkit
 acp run -a claude-acp --backup no \
   --wks $DEMO_DIR/quarkit/spring-boot-todo-app \
-  -s $SKILL_DIR/quarkus-skills/skills \
+  -s $SKILL_DIR/skills \
   --mcp-server quarkit-http \
   -p "Migrate this Spring Boot project to Quarkus"
 ```
