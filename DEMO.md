@@ -29,6 +29,8 @@ Create the different projects, install mcp, acp tools using this script
 
 ## Demo instructions
 
+**Important**: If, the migration fails using `Agent Coding & Quarkit`, look to the folder suffixed with `*-migrated` under: `$DEMO_DIR/quarkit` as it contains the application migrated. You can find the same too for `mtool` !
+
 ### Analyze and transform using mtool
 
 **Description** : During this demo you will use the `mtool` CLI to analyze an application to be migrated, generate a migration plan (= JSON report file) based on rules conditions evaluated against the application and execute the migration using openrewrite recipes defined as instructions part of the rules
@@ -196,7 +198,7 @@ rm -rf $DEMO_DIR/spring-boot-todo-app-quarkus $DEMO_DIR/spring-boot-todo-app/mig
 
 ---
 
-## The Quarkus Todo application and migration summary
+### The Quarkus Todo application and migration summary
 
 **Description** : We will now analyze the migration summary and validate if we can start the Quarkus application and create tasks using the UI.
 
@@ -216,7 +218,7 @@ rm -rf $DEMO_DIR/spring-boot-todo-app-quarkus $DEMO_DIR/spring-boot-todo-app/mig
 
 ---
 
-## Quarkit MCP server with acp
+### Quarkit MCP server with acp
 
 **Description** : Use the commands of the Smallrye ACP CLI - https://github.com/smallrye/smallrye-acp-client installed to install an agent or use a mcp server, to list the tools and query a tool. 
 
@@ -264,7 +266,7 @@ acp mcp call quarkit-http quarkit_reference_lookup -p map=config -p key=spring.d
 
 ---
 
-## Break a migrated Java JPA entity
+### Break a migrated Java JPA entity
 
 **Description** : During the following demo, you will modify within the migrated application a Java class (Task.java class by example) to re-run the MCP Tool validation and observe what it happened when a check condition is not correct.
 
