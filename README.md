@@ -26,7 +26,7 @@ Open the quarkus insight [slides](./slides/reveal/index.html) in a browser.
 
 ## How to replay the demos
 
-See demos README [instructions](./demo/README.md)
+See demos README [instructions](./DEMO.md)
 
 ## Tools shown
 

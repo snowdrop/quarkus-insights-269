@@ -97,19 +97,4 @@ setup_demo quarkit
 cat <<EOF
 
 Done. Everything is in: $DEMO_DIR
-
-Install and start the quarkit MCP server in its own terminal and leave it there
-(it stops when its stdin closes, so don't background it):
-
-  cd $DEMO_DIR
-  acp mcp add -f -t http quarkit-http http://localhost:8080/mcp -- \\
-    jbang --deps dev.snowdrop.mtool:references:2.0.3 mcp-http@snowdrop/quarkit
-
-  acp mcp serve -e QUARKIT_ALLOWED_DIRS=$DEMO_DIR quarkit-http
-
-Then check the available MCP Tools from another terminal:
-  acp mcp tools quarkit-http
-
-Note: the Quarkit MCP server listens on 8080, so run the migrated todo app on 8090
-(see demo/README.md, block e). Podman or Docker must be running for its Dev Services MySQL.
 EOF
