@@ -1,6 +1,6 @@
 # AI-Assisted Migration Tools for Quarkus
 
-[Quarkus Insights #330](https://github.com/quarkusio/quarkus-insights/issues/330) — live episode.
+[Quarkus Insights #269](https://github.com/quarkusio/quarkus-insights/issues/330) — live episode.
 
 Charles Moulliard · Aurea Muñoz
 
