@@ -1,0 +1,44 @@
+- category: mandatory
+  customVariables: []
+  description: SpringBoot to Quarkus
+  effort: 1
+  labels:
+    - konveyor.io/source=springboot
+    - konveyor.io/target=quarkus
+  links: []
+  message: "SpringBoot to Quarkus."
+  ruleID: 011-springboot-replace-dependency-jpa
+  when:
+    condition: |
+      properties.key is 'spring.jpa.*' AND pom.dependency is (gavs="org.springframework.boot:spring-boot-starter-data-jpa")
+  order: 2
+  instructions:
+    ai:
+      - tasks:
+          - "Add the quarkus dependency: quarkus-spring-data-jpa"
+          - "Add the quarkus dependency: quarkus-jdbc-mysql"
+    manual:
+      - todo: "Add the Quarkus BOM and quarkus-arc, quarkus-core dependencies within the pom.xml file"
+    openrewrite:
+      - name: Replace the SpringBoot parent dependency with Quarkus BOM within the pom.xml file
+        description: Replace the SpringBoot parent dependency with Quarkus BOM within the pom.xml file.
+        recipeList:
+          - org.openrewrite.maven.AddDependency:
+              groupId: io.quarkus
+              artifactId: quarkus-spring-data-jpa
+              version: 3.31.3
+          - org.openrewrite.maven.AddDependency:
+              groupId: io.quarkus
+              artifactId: quarkus-jdbc-mysql
+              version: 3.31.3
+        gav:
+          - dev.snowdrop.mtool:openrewrite-recipes:1.0.6
+          - org.openrewrite:rewrite-maven:8.73.0
+          - org.openrewrite:rewrite-java:8.73.0
+          - org.openrewrite.recipe:rewrite-java-dependencies:1.46.0
+          - org.openrewrite.recipe:rewrite-spring-to-quarkus:0.3.1
+
+
+
+
+
