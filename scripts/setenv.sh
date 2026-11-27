@@ -1,7 +1,7 @@
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"   # <repo>/scripts
-INSIGHTS_DIR="$(dirname "$SCRIPT_DIR")"        # <repo> = quarkus-insights-330
-# Default: qi330-demo/ inside this repo, resolved from the script location (not the current directory).
-DEMO_DIR="$INSIGHTS_DIR/qi330-demo"
+INSIGHTS_DIR="$(dirname "$SCRIPT_DIR")"        # <repo> = quarkus-insights-269
+# Default: qi269-demo/ inside this repo, resolved from the script location (not the current directory).
+DEMO_DIR="$INSIGHTS_DIR/qi269-demo"
 
 export QUARKIT_ALLOWED_DIRS=$DEMO_DIR/quarkit
 export SKILL_DIR=$DEMO_DIR/quarkus-skills

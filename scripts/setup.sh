@@ -2,19 +2,19 @@
 set -euo pipefail
 
 # Prepares everything for the Quarkus Insights #330 demos.
-# Repos land in qi330-demo/ inside this repo (override with DEMO_DIR=...).
+# Repos land in qi269-demo/ inside this repo (override with DEMO_DIR=...).
 # Safe to re-run: existing clones are kept.
 #
 # Requirements: git, Java 21+, Maven (wrappers are used), jbang, jq, Podman or Docker.
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"   # <repo>/scripts
-INSIGHTS_DIR="$(dirname "$SCRIPT_DIR")"        # <repo> = quarkus-insights-330
-# Default: qi330-demo/ inside this repo, resolved from the script location (not the current directory).
-DEMO_DIR="$INSIGHTS_DIR/qi330-demo"
+INSIGHTS_DIR="$(dirname "$SCRIPT_DIR")"        # <repo> = quarkus-insights-269
+# Default: qi269-demo/ inside this repo, resolved from the script location (not the current directory).
+DEMO_DIR="$INSIGHTS_DIR/qi269-demo"
 echo "Insight dir: $INSIGHTS_DIR"
 echo "Demo dir: $DEMO_DIR"
 
-# Start from a clean state: remove every folder under qi330-demo (files such as .gitkeep are kept)
+# Start from a clean state: remove every folder under qi269-demo (files such as .gitkeep are kept)
 if [ -d "$DEMO_DIR" ] && [ -n "$(find "$DEMO_DIR" -mindepth 1 -maxdepth 1 -type d)" ]; then
   echo "WARNING: the following folders under $DEMO_DIR will be DELETED:"
   find "$DEMO_DIR" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sed 's/^/  - /'
@@ -94,8 +94,8 @@ SKILL_DIR="$DEMO_DIR/quarkus-skills/skills/migrate-spring-to-quarkus"
 echo "SKILL_DIR=$SKILL_DIR"
 
 # Copy the applications of this repo to the folders used by the different demos:
-#   qi330-demo/mtool   : deterministic migration (openrewrite), needs the cookbook rules
-#   qi330-demo/quarkit : AI assisted migration (MCP), needs the skill installed in the app
+#   qi269-demo/mtool   : deterministic migration (openrewrite), needs the cookbook rules
+#   qi269-demo/quarkit : AI assisted migration (MCP), needs the skill installed in the app
 APPS_DIR="$INSIGHTS_DIR/applications"
 
 setup_demo mtool

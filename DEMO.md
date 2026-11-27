@@ -11,8 +11,8 @@ Data JPA + MySQL). All paths assume `<repo_cloned>/scripts/setup.sh` has run as 
 - Quarkus Insights project **cloned** (not downloaded as a ZIP !)
 
 ```bash
-git clone https://github.com/snowdrop/quarkus-insights-330.git
-cd quarkus-insights-330
+git clone https://github.com/snowdrop/quarkus-insights-269.git
+cd quarkus-insights-269
 ```
 
 > **Warning**: Don't forget to set your AI LLM/Provider API Key before running `acp run` or the coding agent.
