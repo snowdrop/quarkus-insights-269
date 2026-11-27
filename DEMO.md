@@ -138,7 +138,7 @@ project goes to the sibling **`$DEMO_DIR/quarkit/spring-boot-todo-app-quarkus/`*
 | 2 | `less +'/### Decision Gate Table' $SKILL_DIR/skills/migrate-spring-to-quarkus/SKILL.md` | The decision gate table details the different modules to be evaluated, what to check and the expected result. If it fails, then the coding agent will exit, otherwise it continues. |
 | 3 | `less $SKILL_DIR/skills/migrate-spring-to-quarkus/modules/prerequisite/prerequisite.md` | Read the `prerequisite.md` to see how we verify the prerequisites  |
 | 4 | `less $SKILL_DIR/skills/migrate-spring-to-quarkus/modules/planning/planning.md` | The `planning.md` file is a central point of the architecture as it will capture under the generated file: `migration-spec.yaml` different metadata used by the modules to migrate the application.  |
-| 3 | `cat $DEMO_DIR/quarkit/spring-boot-todo-app/.quarkus-migration.yml` | The skill can use the information of the file `.quarkus-migration.yml` (when created) within the module: planning and prerequisite to execute the instructions according to the user's choices when running in autonmous mode. |
+| 5 | `cat $DEMO_DIR/quarkit/spring-boot-todo-app/.quarkus-migration.yml` | The skill can use the information of the file `.quarkus-migration.yml` (when created) within the module: planning and prerequisite to execute the instructions according to the user's choices when running in autonmous mode. |
 
 - When you have finished to review the skill folders, files, launch the Quarkit MCP server
 ```bash
@@ -178,7 +178,7 @@ acp run -a claude-acp --backup no \
 ```bash
 # TERMINAL 2
 cd $DEMO_DIR/quarkit/spring-boot-todo-app
-claude --mcp-config '{"mcpServers":{"mtools":{"type":"http","url":"http://localhost:8080/mcp"}}}' \
+claude --mcp-config '{"mcpServers":{"quarkit":{"type":"http","url":"http://localhost:8080/mcp"}}}' \
   --permission-mode auto \
   "Migrate this Spring Boot project to Quarkus"
 ```
@@ -257,7 +257,7 @@ acp mcp list
 
 | # | Command | Comment |
 |---|---------|-----|
-| 1 | `acp mcp tools quarkit-http` | Four tools: `quarkit_analyze`, `quarkit_validate`, `quarkit_references_list` and `quarkit_lookup` are listed. This is what the agent sees. If you pass the parameter: `--schema` then you will see the tool's parameters. |
+| 1 | `acp mcp tools quarkit-http` | Four tools: `quarkit_analyze`, `quarkit_validate`, `quarkit_references_list` and `quarkit_reference_lookup` are listed. This is what the agent sees. If you pass the parameter: `--schema` then you will see the tool's parameters. |
 | 2 | `acp mcp call quarkit-http quarkit_analyze -p "query=pom dependency all" -p project_path=$DEMO_DIR/quarkit/spring-boot-todo-app` | The tool analyze allows to parse an application using a ANTLR query. Verify that you got 8 matches as pom dependencies. |
 | 3 | `acp mcp call quarkit-http quarkit_analyze -p "query=java annotation all" -p project_path=$DEMO_DIR/quarkit/spring-boot-todo-app` | We run a new query to search/find all the annotations within the Java classes. The parser used under the hood is TreeSitter4j- https://github.com/roastedroot/treesitter4j. |
 | 4 | `acp mcp call quarkit-http quarkit_references_list` | List the references: annotation, config, dependency and their sections/domains. Such data are loaded y the Quarkit MCP server at launch ! |
